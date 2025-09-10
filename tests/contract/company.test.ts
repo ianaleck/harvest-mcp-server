@@ -76,12 +76,11 @@ describe('Company Tool', () => {
       const result = await getCompanyTool.execute({});
       
       expect(result).toBeDefined();
-      expect(result.content).toBeDefined();
-      expect(result.content.id).toHaveValidHarvestId();
-      expect(result.content.name).toBe('Mock Harvest Company');
-      expect(result.content.is_active).toBe(true);
-      expect(result.content.time_format).toBe('decimal');
-      expect(result.content.weekly_capacity).toBeWithinRange(0, 168);
+      expect(result.id).toHaveValidHarvestId();
+      expect(result.name).toBe('Mock Harvest Company');
+      expect(result.is_active).toBe(true);
+      expect(result.time_format).toBe('decimal');
+      expect(result.weekly_capacity).toBeWithinRange(0, 168);
     });
 
     it('should validate response schema', async () => {
@@ -92,9 +91,9 @@ describe('Company Tool', () => {
       const { CompanySchema } = await import('../../src/schemas/company');
 
       // Should not throw validation error
-      expect(() => CompanySchema.parse(result.content)).not.toThrow();
+      expect(() => CompanySchema.parse(result)).not.toThrow();
 
-      const validatedData = CompanySchema.parse(result.content);
+      const validatedData = CompanySchema.parse(result);
       
       expect(validatedData.id).toHaveValidHarvestId();
       expect(validatedData.name).toBeTruthy();
@@ -235,11 +234,11 @@ describe('Company Tool', () => {
 
       // Should work with empty object
       const result1 = await getCompanyTool.execute({});
-      expect(result1.content.id).toBe(1234567);
+      expect(result1.id).toBe(1234567);
 
       // Should work with undefined
       const result2 = await getCompanyTool.execute(undefined);
-      expect(result2.content.id).toBe(1234567);
+      expect(result2.id).toBe(1234567);
     });
 
     it('should maintain consistent data across multiple calls', async () => {
@@ -250,9 +249,9 @@ describe('Company Tool', () => {
       const result2 = await getCompanyTool.execute({});
 
       // Should return identical data
-      expect(result1.content).toEqual(result2.content);
-      expect(result1.content.id).toBe(result2.content.id);
-      expect(result1.content.name).toBe(result2.content.name);
+      expect(result1).toEqual(result2);
+      expect(result1.id).toBe(result2.id);
+      expect(result1.name).toBe(result2.name);
     });
   });
 

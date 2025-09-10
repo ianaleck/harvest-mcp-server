@@ -182,11 +182,11 @@ describe('Time Entry Tools', () => {
       const result = await listTimeEntriesInTool.execute({});
       
       expect(result).toBeDefined();
-      expect(result.content).toBeDefined();
-      expect(Array.isArray(result.content.time_entries)).toBe(true);
-      expect(result.content.time_entries).toHaveLength(1);
+      expect(result.time_entries).toBeDefined();
+      expect(Array.isArray(result.time_entries)).toBe(true);
+      expect(result.time_entries).toHaveLength(1);
       
-      const timeEntry = result.content.time_entries[0];
+      const timeEntry = result.time_entries[0];
       expect(timeEntry.id).toHaveValidHarvestId();
       expect(timeEntry.spent_date).toBeValidDateString();
       expect(timeEntry.hours).toBeValidDecimalHours();
@@ -206,9 +206,9 @@ describe('Time Entry Tools', () => {
       });
       
       expect(result).toBeDefined();
-      expect(result.content.time_entries).toBeDefined();
-      expect(result.content.per_page).toBe(2000);
-      expect(result.content.page).toBe(1);
+      expect(result.time_entries).toBeDefined();
+      expect(result.per_page).toBe(2000);
+      expect(result.page).toBe(1);
     });
 
     it('should validate query parameters with Zod', async () => {
@@ -247,14 +247,13 @@ describe('Time Entry Tools', () => {
       const result = await getTimeEntryTool.execute({ time_entry_id: 636709355 });
       
       expect(result).toBeDefined();
-      expect(result.content).toBeDefined();
-      expect(result.content.id).toHaveValidHarvestId();
-      expect(result.content.spent_date).toBeValidDateString();
-      expect(result.content.hours).toBeValidDecimalHours();
-      expect(result.content.user.id).toHaveValidHarvestId();
-      expect(result.content.project.id).toHaveValidHarvestId();
-      expect(result.content.task.id).toHaveValidHarvestId();
-      expect(result.content.client.currency).toBeValidCurrencyCode();
+      expect(result.id).toHaveValidHarvestId();
+      expect(result.spent_date).toBeValidDateString();
+      expect(result.hours).toBeValidDecimalHours();
+      expect(result.user.id).toHaveValidHarvestId();
+      expect(result.project.id).toHaveValidHarvestId();
+      expect(result.task.id).toHaveValidHarvestId();
+      expect(result.client.currency).toBeValidCurrencyCode();
     });
 
     it('should handle not found errors', async () => {
@@ -300,11 +299,10 @@ describe('Time Entry Tools', () => {
       });
       
       expect(result).toBeDefined();
-      expect(result.content).toBeDefined();
-      expect(result.content.id).toHaveValidHarvestId();
-      expect(result.content.hours).toBeValidDecimalHours();
-      expect(result.content.project.id).toBe(14307913);
-      expect(result.content.task.id).toBe(8083365);
+      expect(result.id).toHaveValidHarvestId();
+      expect(result.hours).toBeValidDecimalHours();
+      expect(result.project.id).toBe(14307913);
+      expect(result.task.id).toBe(8083365);
     });
 
     it('should successfully create a time entry with start/end times', async () => {
@@ -321,8 +319,8 @@ describe('Time Entry Tools', () => {
       });
       
       expect(result).toBeDefined();
-      expect(result.content.started_time).toBeValidTimeString();
-      expect(result.content.ended_time).toBeValidTimeString();
+      expect(result.started_time).toBeValidTimeString();
+      expect(result.ended_time).toBeValidTimeString();
     });
 
     it('should validate required parameters', async () => {
@@ -366,10 +364,9 @@ describe('Time Entry Tools', () => {
       });
       
       expect(result).toBeDefined();
-      expect(result.content).toBeDefined();
-      expect(result.content.id).toBe(636709355);
-      expect(result.content.hours).toBe(7.5);
-      expect(result.content.notes).toContain('Updated:');
+      expect(result.id).toBe(636709355);
+      expect(result.hours).toBe(7.5);
+      expect(result.notes).toContain('Updated:');
     });
 
     it('should validate required id parameter', async () => {
@@ -393,8 +390,7 @@ describe('Time Entry Tools', () => {
       const result = await deleteTimeEntryTool.execute({ time_entry_id: 636709355 });
       
       expect(result).toBeDefined();
-      expect(result.content).toBeDefined();
-      expect(result.content.message).toContain('deleted successfully');
+      expect(result.message).toContain('deleted successfully');
     });
 
     it('should handle not found errors for delete', async () => {
@@ -420,10 +416,9 @@ describe('Time Entry Tools', () => {
       });
       
       expect(result).toBeDefined();
-      expect(result.content).toBeDefined();
-      expect(result.content.is_running).toBe(true);
-      expect(result.content.hours).toBe(0); // Just started
-      expect(result.content.timer_started_at).toBeTruthy();
+      expect(result.is_running).toBe(true);
+      expect(result.hours).toBe(0); // Just started
+      expect(result.timer_started_at).toBeTruthy();
     });
 
     it('should successfully stop a timer', async () => {
@@ -435,10 +430,9 @@ describe('Time Entry Tools', () => {
       const result = await stopTimerTool.execute({ id: 636709357 });
       
       expect(result).toBeDefined();
-      expect(result.content).toBeDefined();
-      expect(result.content.is_running).toBe(false);
-      expect(result.content.hours).toBeGreaterThan(0); // Should have calculated hours
-      expect(result.content.ended_time).toBeValidTimeString();
+      expect(result.is_running).toBe(false);
+      expect(result.hours).toBeGreaterThan(0); // Should have calculated hours
+      expect(result.ended_time).toBeValidTimeString();
     });
 
     it('should successfully restart a timer', async () => {
@@ -450,11 +444,10 @@ describe('Time Entry Tools', () => {
       const result = await restartTimerTool.execute({ id: 636709355 });
       
       expect(result).toBeDefined();
-      expect(result.content).toBeDefined();
-      expect(result.content.is_running).toBe(true);
-      expect(result.content.hours).toBe(0); // Fresh restart
-      expect(result.content.timer_started_at).toBeTruthy();
-      expect(result.content.id).not.toBe(636709355); // New entry created
+      expect(result.is_running).toBe(true);
+      expect(result.hours).toBe(0); // Fresh restart
+      expect(result.timer_started_at).toBeTruthy();
+      expect(result.id).not.toBe(636709355); // New entry created
     });
 
     it('should validate required parameters for timer operations', async () => {

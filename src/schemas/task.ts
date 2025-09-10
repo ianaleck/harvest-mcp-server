@@ -78,6 +78,7 @@ export const UpdateTaskSchema = CreateTaskSchema.partial().extend({
 
 // Create/Update project task assignment
 export const CreateProjectTaskAssignmentSchema = z.object({
+  project_id: z.number().int().positive(),
   task_id: z.number().int().positive(),
   is_active: z.boolean().optional().default(true),
   billable: z.boolean().optional().default(true),
@@ -86,6 +87,7 @@ export const CreateProjectTaskAssignmentSchema = z.object({
 });
 
 export const UpdateProjectTaskAssignmentSchema = CreateProjectTaskAssignmentSchema.partial().extend({
+  project_id: z.number().int().positive(),
   id: z.number().int().positive(),
 });
 
@@ -99,6 +101,7 @@ export const TaskQuerySchema = z.object({
 
 // Query parameters for listing project task assignments
 export const ProjectTaskAssignmentQuerySchema = z.object({
+  project_id: z.number().int().positive(),
   is_active: z.boolean().optional(),
   updated_since: z.string().datetime({ offset: true }).optional(),
   page: z.number().int().positive().optional(),
