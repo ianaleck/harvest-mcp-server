@@ -171,7 +171,7 @@ describe('Time Entry Tools', () => {
     it('should successfully list time entries', async () => {
       // First check if tools are registered at all
       const allTools = await harvestServer.listTools();
-      expect(allTools.length).toBe(9); // 1 company + 8 time entry tools
+      expect(allTools.length).toBe(23); // 1 company + 8 time entry + 5 project + 9 task tools
       
       const timeEntryTools = harvestServer.getToolsByCategory('time_entries');
       expect(timeEntryTools.length).toBe(8); // Should be 8 time entry tools

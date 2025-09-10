@@ -423,6 +423,345 @@ export class HarvestMockServer {
       }
     });
 
+    // Individual project endpoint
+    this.responses.set('GET:/v2/projects/14307913', {
+      status: 200,
+      data: {
+        id: 14307913,
+        name: "Web Application Project",
+        code: "WAP",
+        is_active: true,
+        is_billable: true,
+        is_fixed_fee: false,
+        bill_by: "Project",
+        hourly_rate: 100.0,
+        budget: 50000.0,
+        budget_by: "project",
+        budget_is_monthly: false,
+        notify_when_over_budget: true,
+        over_budget_notification_percentage: 80.0,
+        over_budget_notification_date: null,
+        show_budget_to_all: false,
+        cost_budget: 35000.0,
+        cost_budget_include_expenses: false,
+        fee: null,
+        notes: "Main web application development project",
+        starts_on: "2025-01-01",
+        ends_on: "2025-12-31",
+        created_at: "2024-12-01T00:00:00Z",
+        updated_at: "2025-09-10T00:00:00Z",
+        client: {
+          id: 5735776,
+          name: "Acme Corporation",
+          currency: "USD"
+        }
+      }
+    });
+
+    // Create project endpoint
+    this.responses.set('POST:/v2/projects', {
+      status: 201,
+      data: {
+        id: 14307914,
+        name: "New Project",
+        code: "NP",
+        is_active: true,
+        is_billable: true,
+        is_fixed_fee: false,
+        bill_by: "none",
+        hourly_rate: null,
+        budget: null,
+        budget_by: null,
+        budget_is_monthly: false,
+        notify_when_over_budget: false,
+        over_budget_notification_percentage: null,
+        over_budget_notification_date: null,
+        show_budget_to_all: false,
+        cost_budget: null,
+        cost_budget_include_expenses: false,
+        fee: null,
+        notes: null,
+        starts_on: null,
+        ends_on: null,
+        created_at: "2025-09-10T00:00:00Z",
+        updated_at: "2025-09-10T00:00:00Z",
+        client: {
+          id: 5735776,
+          name: "Acme Corporation",
+          currency: "USD"
+        }
+      }
+    });
+
+    // Update project endpoint
+    this.responses.set('PATCH:/v2/projects/14307913', {
+      status: 200,
+      data: {
+        id: 14307913,
+        name: "Updated Web Application Project",
+        code: "UWAP",
+        is_active: true,
+        is_billable: true,
+        is_fixed_fee: false,
+        bill_by: "Project",
+        hourly_rate: 120.0,
+        budget: 60000.0,
+        budget_by: "project",
+        budget_is_monthly: false,
+        notify_when_over_budget: true,
+        over_budget_notification_percentage: 80.0,
+        over_budget_notification_date: null,
+        show_budget_to_all: false,
+        cost_budget: 42000.0,
+        cost_budget_include_expenses: false,
+        fee: null,
+        notes: "Updated project details",
+        starts_on: "2025-01-01",
+        ends_on: "2025-12-31",
+        created_at: "2024-12-01T00:00:00Z",
+        updated_at: "2025-09-10T10:00:00Z",
+        client: {
+          id: 5735776,
+          name: "Acme Corporation",
+          currency: "USD"
+        }
+      }
+    });
+
+    // Delete project endpoint
+    this.responses.set('DELETE:/v2/projects/14307913', {
+      status: 200,
+      data: {}
+    });
+
+    // Tasks endpoints
+    this.responses.set('GET:/v2/tasks', {
+      status: 200,
+      data: {
+        tasks: [
+          {
+            id: 8083365,
+            name: "Development",
+            billable_by_default: true,
+            default_hourly_rate: 100.0,
+            is_default: false,
+            is_active: true,
+            created_at: "2024-01-01T00:00:00Z",
+            updated_at: "2024-06-01T00:00:00Z"
+          },
+          {
+            id: 8083366,
+            name: "Design",
+            billable_by_default: true,
+            default_hourly_rate: 90.0,
+            is_default: false,
+            is_active: true,
+            created_at: "2024-01-01T00:00:00Z",
+            updated_at: "2024-06-01T00:00:00Z"
+          },
+          {
+            id: 8083367,
+            name: "Project Management",
+            billable_by_default: true,
+            default_hourly_rate: 110.0,
+            is_default: false,
+            is_active: true,
+            created_at: "2024-01-01T00:00:00Z",
+            updated_at: "2024-06-01T00:00:00Z"
+          }
+        ],
+        per_page: 2000,
+        total_pages: 1,
+        total_entries: 3,
+        next_page: null,
+        previous_page: null,
+        page: 1,
+        links: {
+          first: "https://api.harvestapp.com/v2/tasks?page=1",
+          next: null,
+          previous: null,
+          last: "https://api.harvestapp.com/v2/tasks?page=1"
+        }
+      }
+    });
+
+    // Individual task endpoint
+    this.responses.set('GET:/v2/tasks/8083365', {
+      status: 200,
+      data: {
+        id: 8083365,
+        name: "Development",
+        billable_by_default: true,
+        default_hourly_rate: 100.0,
+        is_default: false,
+        is_active: true,
+        created_at: "2024-01-01T00:00:00Z",
+        updated_at: "2024-06-01T00:00:00Z"
+      }
+    });
+
+    // Create task endpoint
+    this.responses.set('POST:/v2/tasks', {
+      status: 201,
+      data: {
+        id: 8083368,
+        name: "New Task",
+        billable_by_default: true,
+        default_hourly_rate: null,
+        is_default: false,
+        is_active: true,
+        created_at: "2025-09-10T00:00:00Z",
+        updated_at: "2025-09-10T00:00:00Z"
+      }
+    });
+
+    // Update task endpoint
+    this.responses.set('PATCH:/v2/tasks/8083365', {
+      status: 200,
+      data: {
+        id: 8083365,
+        name: "Updated Development",
+        billable_by_default: true,
+        default_hourly_rate: 110.0,
+        is_default: false,
+        is_active: true,
+        created_at: "2024-01-01T00:00:00Z",
+        updated_at: "2025-09-10T10:00:00Z"
+      }
+    });
+
+    // Delete task endpoint
+    this.responses.set('DELETE:/v2/tasks/8083365', {
+      status: 200,
+      data: {}
+    });
+
+    // Project task assignments endpoints
+    this.responses.set('GET:/v2/projects/14307913/task_assignments', {
+      status: 200,
+      data: {
+        task_assignments: [
+          {
+            id: 155505014,
+            billable: true,
+            is_active: true,
+            created_at: "2024-01-01T00:00:00Z",
+            updated_at: "2024-06-01T00:00:00Z",
+            hourly_rate: 100.0,
+            budget: null,
+            task: {
+              id: 8083365,
+              name: "Development",
+              billable_by_default: true,
+              default_hourly_rate: 100.0,
+              is_default: false,
+              is_active: true,
+              created_at: "2024-01-01T00:00:00Z",
+              updated_at: "2024-06-01T00:00:00Z"
+            }
+          },
+          {
+            id: 155505015,
+            billable: true,
+            is_active: true,
+            created_at: "2024-01-01T00:00:00Z",
+            updated_at: "2024-06-01T00:00:00Z",
+            hourly_rate: 90.0,
+            budget: 5000.0,
+            task: {
+              id: 8083366,
+              name: "Design",
+              billable_by_default: true,
+              default_hourly_rate: 90.0,
+              is_default: false,
+              is_active: true,
+              created_at: "2024-01-01T00:00:00Z",
+              updated_at: "2024-06-01T00:00:00Z"
+            }
+          }
+        ],
+        per_page: 2000,
+        total_pages: 1,
+        total_entries: 2,
+        next_page: null,
+        previous_page: null,
+        page: 1,
+        links: {
+          first: "https://api.harvestapp.com/v2/projects/14307913/task_assignments?page=1",
+          next: null,
+          previous: null,
+          last: "https://api.harvestapp.com/v2/projects/14307913/task_assignments?page=1"
+        }
+      }
+    });
+
+    // Create project task assignment endpoint
+    this.responses.set('POST:/v2/projects/14307913/task_assignments', {
+      status: 201,
+      data: {
+        id: 155505016,
+        billable: true,
+        is_active: true,
+        created_at: "2025-09-10T00:00:00Z",
+        updated_at: "2025-09-10T00:00:00Z",
+        hourly_rate: 110.0,
+        budget: null,
+        task: {
+          id: 8083367,
+          name: "Project Management",
+          billable_by_default: true,
+          default_hourly_rate: 110.0,
+          is_default: false,
+          is_active: true,
+          created_at: "2024-01-01T00:00:00Z",
+          updated_at: "2024-06-01T00:00:00Z"
+        }
+      }
+    });
+
+    // Update project task assignment endpoint
+    this.responses.set('PATCH:/v2/projects/14307913/task_assignments/155505014', {
+      status: 200,
+      data: {
+        id: 155505014,
+        billable: false,
+        is_active: true,
+        created_at: "2024-01-01T00:00:00Z",
+        updated_at: "2025-09-10T10:00:00Z",
+        hourly_rate: 105.0,
+        budget: 10000.0,
+        task: {
+          id: 8083365,
+          name: "Development",
+          billable_by_default: true,
+          default_hourly_rate: 100.0,
+          is_default: false,
+          is_active: true,
+          created_at: "2024-01-01T00:00:00Z",
+          updated_at: "2024-06-01T00:00:00Z"
+        }
+      }
+    });
+
+    // Delete project task assignment endpoint
+    this.responses.set('DELETE:/v2/projects/14307913/task_assignments/155505014', {
+      status: 200,
+      data: {}
+    });
+
+    // 404 responses for non-existent resources
+    this.responses.set('GET:/v2/projects/999999999', {
+      status: 404,
+      data: { error: 'not_found', error_description: 'Project not found' },
+      headers: {}
+    });
+
+    this.responses.set('GET:/v2/tasks/999999999', {
+      status: 404,
+      data: { error: 'not_found', error_description: 'Task not found' },
+      headers: {}
+    });
+
     // Clients endpoint
     this.responses.set('GET:/v2/clients', {
       status: 200,
