@@ -2,6 +2,7 @@
  * Company Tool Contract Tests
  */
 
+import '../matchers/harvest-matchers';
 import { HarvestMockServer } from '../mocks/harvest-mock-server';
 
 describe('Company Tool', () => {
@@ -258,7 +259,7 @@ describe('Company Tool', () => {
   describe('MCP Integration', () => {
     it('should handle tool discovery correctly', async () => {
       const tools = await harvestServer.listTools();
-      expect(tools).toHaveLength(1);
+      expect(tools).toHaveLength(9);
       expect(tools[0].name).toBe('get_company');
     });
 
