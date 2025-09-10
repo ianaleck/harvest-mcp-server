@@ -1,0 +1,12 @@
+node_modules
+dist
+coverage
+.git
+.env*
+*.log
+package-lock.json
+specs/
+resources/
+memory/
+scripts/
+templates/
