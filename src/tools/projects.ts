@@ -123,7 +123,7 @@ class ListProjectTaskAssignmentsHandler implements ToolHandler {
     try {
       const validatedArgs = validateInput(ProjectTaskAssignmentQuerySchema, args, 'project task assignments query');
       logger.info('Listing project task assignments from Harvest API', { projectId: validatedArgs.project_id });
-      const assignments = await this.config.harvestClient.getProjectTaskAssignments(validatedArgs);
+      const assignments = await this.config.harvestClient.getProjectTaskAssignments(validatedArgs.project_id, validatedArgs);
       
       return {
         content: [{ type: 'text', text: JSON.stringify(assignments, null, 2) }],
@@ -141,7 +141,7 @@ class CreateProjectTaskAssignmentHandler implements ToolHandler {
     try {
       const validatedArgs = validateInput(CreateProjectTaskAssignmentSchema, args, 'create project task assignment');
       logger.info('Creating project task assignment via Harvest API', { projectId: validatedArgs.project_id, taskId: validatedArgs.task_id });
-      const assignment = await this.config.harvestClient.createProjectTaskAssignment(validatedArgs);
+      const assignment = await this.config.harvestClient.createProjectTaskAssignment(validatedArgs.project_id, validatedArgs);
       
       return {
         content: [{ type: 'text', text: JSON.stringify(assignment, null, 2) }],
@@ -162,7 +162,7 @@ class UpdateProjectTaskAssignmentHandler implements ToolHandler {
         projectId: validatedArgs.project_id, 
         taskAssignmentId: validatedArgs.id 
       });
-      const assignment = await this.config.harvestClient.updateProjectTaskAssignment(validatedArgs);
+      const assignment = await this.config.harvestClient.updateProjectTaskAssignment(validatedArgs.project_id, validatedArgs);
       
       return {
         content: [{ type: 'text', text: JSON.stringify(assignment, null, 2) }],
