@@ -31,6 +31,44 @@ import {
   CreateProjectTaskAssignmentSchema,
   UpdateProjectTaskAssignmentSchema,
 } from './schemas/task';
+import {
+  ClientQuerySchema,
+  CreateClientSchema,
+  UpdateClientSchema,
+} from './schemas/client';
+import {
+  UserQuerySchema,
+  CreateUserSchema,
+  UpdateUserSchema,
+} from './schemas/user';
+import {
+  InvoiceQuerySchema,
+  CreateInvoiceSchema,
+  UpdateInvoiceSchema,
+  CreateInvoiceLineItemSchema,
+} from './schemas/invoice';
+import {
+  ExpenseQuerySchema,
+  CreateExpenseSchema,
+  UpdateExpenseSchema,
+  ExpenseCategoryQuerySchema,
+  CreateExpenseCategorySchema,
+  UpdateExpenseCategorySchema,
+} from './schemas/expense';
+import {
+  EstimateQuerySchema,
+  CreateEstimateSchema,
+  UpdateEstimateSchema,
+  SendEstimateSchema,
+  AcceptEstimateSchema,
+  DeclineEstimateSchema,
+} from './schemas/estimate';
+import {
+  TimeReportQuerySchema,
+  ExpenseReportQuerySchema,
+  ProjectBudgetReportQuerySchema,
+  UninvoicedReportQuerySchema,
+} from './schemas/report';
 
 const logger = createLogger('server');
 
@@ -71,6 +109,12 @@ export class HarvestMCPServer {
     this.registerTimeEntryTools();
     this.registerProjectTools();
     this.registerTaskTools();
+    this.registerClientTools();
+    this.registerUserTools();
+    this.registerInvoiceTools();
+    this.registerExpenseTools();
+    this.registerEstimateTools();
+    this.registerReportTools();
   }
 
   private registerToolHandlers() {
@@ -147,6 +191,74 @@ export class HarvestMCPServer {
         return await this.updateProjectTaskAssignment(args);
       case 'delete_project_task_assignment':
         return await this.deleteProjectTaskAssignment(args);
+      // Client tools
+      case 'list_clients':
+        return await this.listClients(args);
+      case 'get_client':
+        return await this.getClient(args);
+      case 'create_client':
+        return await this.createClient(args);
+      case 'update_client':
+        return await this.updateClient(args);
+      case 'delete_client':
+        return await this.deleteClient(args);
+      // User tools
+      case 'list_users':
+        return await this.listUsers(args);
+      case 'get_user':
+        return await this.getUser(args);
+      case 'get_current_user':
+        return await this.getCurrentUser(args);
+      case 'create_user':
+        return await this.createUser(args);
+      case 'update_user':
+        return await this.updateUser(args);
+      case 'delete_user':
+        return await this.deleteUser(args);
+      // Invoice tools
+      case 'list_invoices':
+        return await this.listInvoices(args);
+      case 'get_invoice':
+        return await this.getInvoice(args);
+      case 'create_invoice':
+        return await this.createInvoice(args);
+      case 'update_invoice':
+        return await this.updateInvoice(args);
+      case 'delete_invoice':
+        return await this.deleteInvoice(args);
+      // Expense tools
+      case 'list_expenses':
+        return await this.listExpenses(args);
+      case 'get_expense':
+        return await this.getExpense(args);
+      case 'create_expense':
+        return await this.createExpense(args);
+      case 'update_expense':
+        return await this.updateExpense(args);
+      case 'delete_expense':
+        return await this.deleteExpense(args);
+      case 'list_expense_categories':
+        return await this.listExpenseCategories(args);
+      // Estimate tools
+      case 'list_estimates':
+        return await this.listEstimates(args);
+      case 'get_estimate':
+        return await this.getEstimate(args);
+      case 'create_estimate':
+        return await this.createEstimate(args);
+      case 'update_estimate':
+        return await this.updateEstimate(args);
+      case 'delete_estimate':
+        return await this.deleteEstimate(args);
+      // Report tools
+      case 'get_time_report':
+        return await this.getTimeReport(args);
+      case 'get_expense_report':
+        return await this.getExpenseReport(args);
+      case 'get_project_budget_report':
+        return await this.getProjectBudgetReport(args);
+      case 'get_uninvoiced_report':
+        return await this.getUninvoicedReport(args);
       default:
         throw new Error(`Tool not implemented: ${name}`);
     }
@@ -1217,6 +1329,24 @@ export class HarvestMCPServer {
       if (category === 'tasks') {
         return tool.name.includes('task');
       }
+      if (category === 'clients') {
+        return tool.name.includes('client');
+      }
+      if (category === 'users') {
+        return tool.name.includes('user');
+      }
+      if (category === 'invoices') {
+        return tool.name.includes('invoice');
+      }
+      if (category === 'expenses') {
+        return tool.name.includes('expense');
+      }
+      if (category === 'estimates') {
+        return tool.name.includes('estimate');
+      }
+      if (category === 'reports') {
+        return tool.name.includes('report');
+      }
       return false;
     });
     
@@ -1230,6 +1360,549 @@ export class HarvestMCPServer {
       },
       httpClient: this.harvestClient,
     }));
+  }
+
+  // Client Tools Registration
+  private registerClientTools() {
+    this.tools.set('list_clients', {
+      name: 'list_clients',
+      description: 'Retrieve a list of clients with optional filtering by active status and updated date. Returns paginated results with client details including billing information.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          is_active: { type: 'boolean', description: 'Filter by active status' },
+          updated_since: { type: 'string', format: 'date-time', description: 'Filter by clients updated since this timestamp' },
+          page: { type: 'number', minimum: 1, description: 'Page number for pagination' },
+          per_page: { type: 'number', minimum: 1, maximum: 2000, description: 'Number of clients per page (max 2000)' },
+        },
+        additionalProperties: false,
+      },
+    });
+
+    this.tools.set('get_client', {
+      name: 'get_client',
+      description: 'Retrieve a specific client by its ID. Returns complete client details including contact information and billing configuration.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          client_id: { type: 'number', description: 'The ID of the client to retrieve' },
+        },
+        required: ['client_id'],
+        additionalProperties: false,
+      },
+    });
+
+    this.tools.set('create_client', {
+      name: 'create_client',
+      description: 'Create a new client for project management and billing. Requires client name and supports address and currency configuration.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          name: { type: 'string', minLength: 1, description: 'Client name (required)' },
+          is_active: { type: 'boolean', description: 'Whether the client is active' },
+          address: { type: 'string', description: 'Client address' },
+          currency: { type: 'string', minLength: 3, maxLength: 3, description: '3-letter ISO currency code (e.g., USD, EUR)' },
+        },
+        required: ['name'],
+        additionalProperties: false,
+      },
+    });
+
+    this.tools.set('update_client', {
+      name: 'update_client',
+      description: 'Update an existing client. Can modify name, active status, address, and currency. Only provided fields will be updated.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          id: { type: 'number', description: 'The ID of the client to update (required)' },
+          name: { type: 'string', minLength: 1, description: 'Update client name' },
+          is_active: { type: 'boolean', description: 'Update active status' },
+          address: { type: 'string', description: 'Update client address' },
+          currency: { type: 'string', minLength: 3, maxLength: 3, description: 'Update currency code' },
+        },
+        required: ['id'],
+        additionalProperties: false,
+      },
+    });
+
+    this.tools.set('delete_client', {
+      name: 'delete_client',
+      description: 'Delete (archive) a client. This action archives the client rather than permanently deleting it, preserving historical project and billing data.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          client_id: { type: 'number', description: 'The ID of the client to delete' },
+        },
+        required: ['client_id'],
+        additionalProperties: false,
+      },
+    });
+  }
+
+  // Client Methods Implementation
+  private async listClients(args: Record<string, any>): Promise<CallToolResult> {
+    try {
+      const validatedArgs = ClientQuerySchema.parse(args);
+      logger.info('Listing clients from Harvest API');
+      const clients = await this.harvestClient.getClients(validatedArgs);
+      
+      return {
+        content: [{ type: 'text', text: JSON.stringify(clients, null, 2) }],
+      };
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        logger.error('Invalid clients query parameters:', error.errors);
+        throw new Error(`Invalid parameters: ${error.errors.map(e => e.message).join(', ')}`);
+      }
+      logger.error('Failed to list clients:', error);
+      throw new Error(`Failed to retrieve clients: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  private async getClient(args: Record<string, any>): Promise<CallToolResult> {
+    try {
+      const inputSchema = z.object({ client_id: z.number().int().positive() });
+      const { client_id } = inputSchema.parse(args);
+      
+      logger.info('Fetching client from Harvest API', { clientId: client_id });
+      const client = await this.harvestClient.getClient(client_id);
+      
+      return {
+        content: [{ type: 'text', text: JSON.stringify(client, null, 2) }],
+      };
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        logger.error('Invalid client parameters:', error.errors);
+        throw new Error(`Invalid parameters: ${error.errors.map(e => e.message).join(', ')}`);
+      }
+      logger.error('Failed to fetch client:', error);
+      throw new Error(`Failed to retrieve client: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  private async createClient(args: Record<string, any>): Promise<CallToolResult> {
+    try {
+      const validatedArgs = CreateClientSchema.parse(args);
+      logger.info('Creating client via Harvest API');
+      const client = await this.harvestClient.createClient(validatedArgs);
+      
+      return {
+        content: [{ type: 'text', text: JSON.stringify(client, null, 2) }],
+      };
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        logger.error('Invalid create client parameters:', error.errors);
+        throw new Error(`Invalid parameters: ${error.errors.map(e => e.message).join(', ')}`);
+      }
+      logger.error('Failed to create client:', error);
+      throw new Error(`Failed to create client: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  private async updateClient(args: Record<string, any>): Promise<CallToolResult> {
+    try {
+      const validatedArgs = UpdateClientSchema.parse(args);
+      logger.info('Updating client via Harvest API', { clientId: validatedArgs.id });
+      const client = await this.harvestClient.updateClient(validatedArgs);
+      
+      return {
+        content: [{ type: 'text', text: JSON.stringify(client, null, 2) }],
+      };
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        logger.error('Invalid update client parameters:', error.errors);
+        throw new Error(`Invalid parameters: ${error.errors.map(e => e.message).join(', ')}`);
+      }
+      logger.error('Failed to update client:', error);
+      throw new Error(`Failed to update client: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  private async deleteClient(args: Record<string, any>): Promise<CallToolResult> {
+    try {
+      const inputSchema = z.object({ client_id: z.number().int().positive() });
+      const { client_id } = inputSchema.parse(args);
+      
+      logger.info('Deleting client via Harvest API', { clientId: client_id });
+      await this.harvestClient.deleteClient(client_id);
+      
+      return {
+        content: [{ type: 'text', text: JSON.stringify({ message: `Client ${client_id} deleted successfully` }, null, 2) }],
+      };
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        logger.error('Invalid delete client parameters:', error.errors);
+        throw new Error(`Invalid parameters: ${error.errors.map(e => e.message).join(', ')}`);
+      }
+      logger.error('Failed to delete client:', error);
+      throw new Error(`Failed to delete client: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  // User Tools Registration
+  private registerUserTools() {
+    this.tools.set('list_users', {
+      name: 'list_users',
+      description: 'Retrieve a list of users with optional filtering by active status. Returns team member details including permissions and rates.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          is_active: { type: 'boolean', description: 'Filter by active status' },
+          updated_since: { type: 'string', format: 'date-time', description: 'Filter by users updated since this timestamp' },
+          page: { type: 'number', minimum: 1, description: 'Page number for pagination' },
+          per_page: { type: 'number', minimum: 1, maximum: 2000, description: 'Number of users per page (max 2000)' },
+        },
+        additionalProperties: false,
+      },
+    });
+
+    this.tools.set('get_user', {
+      name: 'get_user',
+      description: 'Retrieve a specific user by ID. Returns complete user profile including roles, permissions, and billing rates.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          user_id: { type: 'number', description: 'The ID of the user to retrieve' },
+        },
+        required: ['user_id'],
+        additionalProperties: false,
+      },
+    });
+
+    this.tools.set('get_current_user', {
+      name: 'get_current_user', 
+      description: 'Retrieve the currently authenticated user\'s profile and permissions.',
+      inputSchema: {
+        type: 'object',
+        properties: {},
+        additionalProperties: false,
+      },
+    });
+
+    this.tools.set('create_user', {
+      name: 'create_user',
+      description: 'Create a new user with specified roles and permissions. Supports team member management and access control.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          first_name: { type: 'string', minLength: 1, description: 'First name (required)' },
+          last_name: { type: 'string', minLength: 1, description: 'Last name (required)' },
+          email: { type: 'string', format: 'email', description: 'Email address (required)' },
+          telephone: { type: 'string', description: 'Phone number' },
+          timezone: { type: 'string', description: 'User timezone' },
+          has_access_to_all_future_projects: { type: 'boolean', description: 'Grant access to all future projects' },
+          is_contractor: { type: 'boolean', description: 'Mark as contractor' },
+          is_admin: { type: 'boolean', description: 'Grant admin privileges' },
+          is_project_manager: { type: 'boolean', description: 'Grant project manager role' },
+          can_see_rates: { type: 'boolean', description: 'Allow viewing of billing rates' },
+          can_create_projects: { type: 'boolean', description: 'Allow project creation' },
+          can_create_invoices: { type: 'boolean', description: 'Allow invoice creation' },
+          is_active: { type: 'boolean', description: 'User active status' },
+          weekly_capacity: { type: 'number', minimum: 0, description: 'Weekly capacity in seconds' },
+          default_hourly_rate: { type: 'number', minimum: 0, description: 'Default hourly rate' },
+          cost_rate: { type: 'number', minimum: 0, description: 'Cost rate for internal calculations' },
+        },
+        required: ['first_name', 'last_name', 'email'],
+        additionalProperties: false,
+      },
+    });
+
+    this.tools.set('update_user', {
+      name: 'update_user',
+      description: 'Update an existing user\'s profile, permissions, and rates. Only provided fields will be updated.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          id: { type: 'number', description: 'The ID of the user to update (required)' },
+          first_name: { type: 'string', minLength: 1, description: 'Update first name' },
+          last_name: { type: 'string', minLength: 1, description: 'Update last name' },
+          email: { type: 'string', format: 'email', description: 'Update email address' },
+          telephone: { type: 'string', description: 'Update phone number' },
+          timezone: { type: 'string', description: 'Update timezone' },
+          has_access_to_all_future_projects: { type: 'boolean', description: 'Update future project access' },
+          is_contractor: { type: 'boolean', description: 'Update contractor status' },
+          is_admin: { type: 'boolean', description: 'Update admin privileges' },
+          is_project_manager: { type: 'boolean', description: 'Update project manager role' },
+          can_see_rates: { type: 'boolean', description: 'Update rate visibility' },
+          can_create_projects: { type: 'boolean', description: 'Update project creation permission' },
+          can_create_invoices: { type: 'boolean', description: 'Update invoice creation permission' },
+          is_active: { type: 'boolean', description: 'Update active status' },
+          weekly_capacity: { type: 'number', minimum: 0, description: 'Update weekly capacity' },
+          default_hourly_rate: { type: 'number', minimum: 0, description: 'Update default hourly rate' },
+          cost_rate: { type: 'number', minimum: 0, description: 'Update cost rate' },
+        },
+        required: ['id'],
+        additionalProperties: false,
+      },
+    });
+
+    this.tools.set('delete_user', {
+      name: 'delete_user',
+      description: 'Delete (archive) a user. This action archives the user rather than permanently deleting them, preserving time tracking history.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          user_id: { type: 'number', description: 'The ID of the user to delete' },
+        },
+        required: ['user_id'],
+        additionalProperties: false,
+      },
+    });
+  }
+
+  // User Methods Implementation  
+  private async listUsers(args: Record<string, any>): Promise<CallToolResult> {
+    try {
+      const validatedArgs = UserQuerySchema.parse(args);
+      logger.info('Listing users from Harvest API');
+      const users = await this.harvestClient.getUsers(validatedArgs);
+      
+      return {
+        content: [{ type: 'text', text: JSON.stringify(users, null, 2) }],
+      };
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        logger.error('Invalid users query parameters:', error.errors);
+        throw new Error(`Invalid parameters: ${error.errors.map(e => e.message).join(', ')}`);
+      }
+      logger.error('Failed to list users:', error);
+      throw new Error(`Failed to retrieve users: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  private async getUser(args: Record<string, any>): Promise<CallToolResult> {
+    try {
+      const inputSchema = z.object({ user_id: z.number().int().positive() });
+      const { user_id } = inputSchema.parse(args);
+      
+      logger.info('Fetching user from Harvest API', { userId: user_id });
+      const user = await this.harvestClient.getUser(user_id);
+      
+      return {
+        content: [{ type: 'text', text: JSON.stringify(user, null, 2) }],
+      };
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        logger.error('Invalid user parameters:', error.errors);
+        throw new Error(`Invalid parameters: ${error.errors.map(e => e.message).join(', ')}`);
+      }
+      logger.error('Failed to fetch user:', error);
+      throw new Error(`Failed to retrieve user: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  private async getCurrentUser(_args: Record<string, any>): Promise<CallToolResult> {
+    try {
+      logger.info('Fetching current user from Harvest API');
+      const user = await this.harvestClient.getCurrentUser();
+      
+      return {
+        content: [{ type: 'text', text: JSON.stringify(user, null, 2) }],
+      };
+    } catch (error) {
+      logger.error('Failed to fetch current user:', error);
+      throw new Error(`Failed to retrieve current user: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  private async createUser(args: Record<string, any>): Promise<CallToolResult> {
+    try {
+      const validatedArgs = CreateUserSchema.parse(args);
+      logger.info('Creating user via Harvest API');
+      const user = await this.harvestClient.createUser(validatedArgs);
+      
+      return {
+        content: [{ type: 'text', text: JSON.stringify(user, null, 2) }],
+      };
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        logger.error('Invalid create user parameters:', error.errors);
+        throw new Error(`Invalid parameters: ${error.errors.map(e => e.message).join(', ')}`);
+      }
+      logger.error('Failed to create user:', error);
+      throw new Error(`Failed to create user: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  private async updateUser(args: Record<string, any>): Promise<CallToolResult> {
+    try {
+      const validatedArgs = UpdateUserSchema.parse(args);
+      logger.info('Updating user via Harvest API', { userId: validatedArgs.id });
+      const user = await this.harvestClient.updateUser(validatedArgs);
+      
+      return {
+        content: [{ type: 'text', text: JSON.stringify(user, null, 2) }],
+      };
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        logger.error('Invalid update user parameters:', error.errors);
+        throw new Error(`Invalid parameters: ${error.errors.map(e => e.message).join(', ')}`);
+      }
+      logger.error('Failed to update user:', error);
+      throw new Error(`Failed to update user: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  private async deleteUser(args: Record<string, any>): Promise<CallToolResult> {
+    try {
+      const inputSchema = z.object({ user_id: z.number().int().positive() });
+      const { user_id } = inputSchema.parse(args);
+      
+      logger.info('Deleting user via Harvest API', { userId: user_id });
+      await this.harvestClient.deleteUser(user_id);
+      
+      return {
+        content: [{ type: 'text', text: JSON.stringify({ message: `User ${user_id} deleted successfully` }, null, 2) }],
+      };
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        logger.error('Invalid delete user parameters:', error.errors);
+        throw new Error(`Invalid parameters: ${error.errors.map(e => e.message).join(', ')}`);
+      }
+      logger.error('Failed to delete user:', error);
+      throw new Error(`Failed to delete user: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  // Invoice Tools Registration
+  private registerInvoiceTools() {
+    this.tools.set('list_invoices', { name: 'list_invoices', description: 'Retrieve invoices with optional filtering by client, project, state, and date ranges.', inputSchema: { type: 'object', properties: { client_id: { type: 'number' }, project_id: { type: 'number' }, state: { type: 'string', enum: ['draft', 'open', 'paid', 'closed'] }, from: { type: 'string', format: 'date' }, to: { type: 'string', format: 'date' }, updated_since: { type: 'string', format: 'date-time' }, page: { type: 'number', minimum: 1 }, per_page: { type: 'number', minimum: 1, maximum: 2000 } }, additionalProperties: false } });
+    this.tools.set('get_invoice', { name: 'get_invoice', description: 'Retrieve a specific invoice by ID with complete details including line items.', inputSchema: { type: 'object', properties: { invoice_id: { type: 'number' } }, required: ['invoice_id'], additionalProperties: false } });
+    this.tools.set('create_invoice', { name: 'create_invoice', description: 'Create a new invoice for a client with optional line items and billing details.', inputSchema: { type: 'object', properties: { client_id: { type: 'number' }, subject: { type: 'string' }, notes: { type: 'string' }, currency: { type: 'string', minLength: 3, maxLength: 3 }, issue_date: { type: 'string', format: 'date' }, due_date: { type: 'string', format: 'date' }, payment_term: { type: 'string' }, tax: { type: 'number', minimum: 0, maximum: 100 }, tax2: { type: 'number', minimum: 0, maximum: 100 }, discount: { type: 'number', minimum: 0, maximum: 100 }, purchase_order: { type: 'string' } }, required: ['client_id'], additionalProperties: false } });
+    this.tools.set('update_invoice', { name: 'update_invoice', description: 'Update an existing invoice. Only provided fields will be updated.', inputSchema: { type: 'object', properties: { id: { type: 'number' }, client_id: { type: 'number' }, subject: { type: 'string' }, notes: { type: 'string' }, currency: { type: 'string', minLength: 3, maxLength: 3 }, issue_date: { type: 'string', format: 'date' }, due_date: { type: 'string', format: 'date' }, payment_term: { type: 'string' }, tax: { type: 'number', minimum: 0, maximum: 100 }, tax2: { type: 'number', minimum: 0, maximum: 100 }, discount: { type: 'number', minimum: 0, maximum: 100 }, purchase_order: { type: 'string' } }, required: ['id'], additionalProperties: false } });
+    this.tools.set('delete_invoice', { name: 'delete_invoice', description: 'Delete an invoice permanently.', inputSchema: { type: 'object', properties: { invoice_id: { type: 'number' } }, required: ['invoice_id'], additionalProperties: false } });
+  }
+
+  // Expense Tools Registration
+  private registerExpenseTools() {
+    this.tools.set('list_expenses', { name: 'list_expenses', description: 'Retrieve expenses with filtering by user, client, project, billing status, and date ranges.', inputSchema: { type: 'object', properties: { user_id: { type: 'number' }, client_id: { type: 'number' }, project_id: { type: 'number' }, is_billed: { type: 'boolean' }, is_closed: { type: 'boolean' }, from: { type: 'string', format: 'date' }, to: { type: 'string', format: 'date' }, updated_since: { type: 'string', format: 'date-time' }, page: { type: 'number', minimum: 1 }, per_page: { type: 'number', minimum: 1, maximum: 2000 } }, additionalProperties: false } });
+    this.tools.set('get_expense', { name: 'get_expense', description: 'Retrieve a specific expense by ID with complete details including receipts.', inputSchema: { type: 'object', properties: { expense_id: { type: 'number' } }, required: ['expense_id'], additionalProperties: false } });
+    this.tools.set('create_expense', { name: 'create_expense', description: 'Create a new expense entry for a project with category and cost details.', inputSchema: { type: 'object', properties: { user_id: { type: 'number' }, project_id: { type: 'number' }, expense_category_id: { type: 'number' }, spent_date: { type: 'string', format: 'date' }, notes: { type: 'string' }, total_cost: { type: 'number', minimum: 0 }, units: { type: 'number', minimum: 0 }, billable: { type: 'boolean' } }, required: ['project_id', 'expense_category_id', 'spent_date', 'total_cost'], additionalProperties: false } });
+    this.tools.set('update_expense', { name: 'update_expense', description: 'Update an existing expense. Only provided fields will be updated.', inputSchema: { type: 'object', properties: { id: { type: 'number' }, user_id: { type: 'number' }, project_id: { type: 'number' }, expense_category_id: { type: 'number' }, spent_date: { type: 'string', format: 'date' }, notes: { type: 'string' }, total_cost: { type: 'number', minimum: 0 }, units: { type: 'number', minimum: 0 }, billable: { type: 'boolean' } }, required: ['id'], additionalProperties: false } });
+    this.tools.set('delete_expense', { name: 'delete_expense', description: 'Delete an expense permanently.', inputSchema: { type: 'object', properties: { expense_id: { type: 'number' } }, required: ['expense_id'], additionalProperties: false } });
+    this.tools.set('list_expense_categories', { name: 'list_expense_categories', description: 'Retrieve available expense categories for expense classification.', inputSchema: { type: 'object', properties: { is_active: { type: 'boolean' }, updated_since: { type: 'string', format: 'date-time' }, page: { type: 'number', minimum: 1 }, per_page: { type: 'number', minimum: 1, maximum: 2000 } }, additionalProperties: false } });
+  }
+
+  // Estimate Tools Registration
+  private registerEstimateTools() {
+    this.tools.set('list_estimates', { name: 'list_estimates', description: 'Retrieve estimates with filtering by client, state, and date ranges.', inputSchema: { type: 'object', properties: { client_id: { type: 'number' }, state: { type: 'string', enum: ['draft', 'sent', 'accepted', 'declined'] }, from: { type: 'string', format: 'date' }, to: { type: 'string', format: 'date' }, updated_since: { type: 'string', format: 'date-time' }, page: { type: 'number', minimum: 1 }, per_page: { type: 'number', minimum: 1, maximum: 2000 } }, additionalProperties: false } });
+    this.tools.set('get_estimate', { name: 'get_estimate', description: 'Retrieve a specific estimate by ID with complete details including line items.', inputSchema: { type: 'object', properties: { estimate_id: { type: 'number' } }, required: ['estimate_id'], additionalProperties: false } });
+    this.tools.set('create_estimate', { name: 'create_estimate', description: 'Create a new estimate for a client with optional line items and terms.', inputSchema: { type: 'object', properties: { client_id: { type: 'number' }, subject: { type: 'string' }, notes: { type: 'string' }, currency: { type: 'string', minLength: 3, maxLength: 3 }, issue_date: { type: 'string', format: 'date' }, tax: { type: 'number', minimum: 0, maximum: 100 }, tax2: { type: 'number', minimum: 0, maximum: 100 }, discount: { type: 'number', minimum: 0, maximum: 100 }, purchase_order: { type: 'string' } }, required: ['client_id'], additionalProperties: false } });
+    this.tools.set('update_estimate', { name: 'update_estimate', description: 'Update an existing estimate. Only provided fields will be updated.', inputSchema: { type: 'object', properties: { id: { type: 'number' }, client_id: { type: 'number' }, subject: { type: 'string' }, notes: { type: 'string' }, currency: { type: 'string', minLength: 3, maxLength: 3 }, issue_date: { type: 'string', format: 'date' }, tax: { type: 'number', minimum: 0, maximum: 100 }, tax2: { type: 'number', minimum: 0, maximum: 100 }, discount: { type: 'number', minimum: 0, maximum: 100 }, purchase_order: { type: 'string' } }, required: ['id'], additionalProperties: false } });
+    this.tools.set('delete_estimate', { name: 'delete_estimate', description: 'Delete an estimate permanently.', inputSchema: { type: 'object', properties: { estimate_id: { type: 'number' } }, required: ['estimate_id'], additionalProperties: false } });
+  }
+
+  // Report Tools Registration
+  private registerReportTools() {
+    this.tools.set('get_time_report', { name: 'get_time_report', description: 'Generate time tracking reports with filtering by date range, users, clients, and projects.', inputSchema: { type: 'object', properties: { from: { type: 'string', format: 'date' }, to: { type: 'string', format: 'date' }, user_id: { type: 'number' }, client_id: { type: 'number' }, project_id: { type: 'number' }, task_id: { type: 'number' }, billable: { type: 'boolean' }, is_billed: { type: 'boolean' }, is_running: { type: 'boolean' }, updated_since: { type: 'string', format: 'date-time' }, group_by: { type: 'string', enum: ['user', 'client', 'project', 'task', 'date'] } }, required: ['from', 'to'], additionalProperties: false } });
+    this.tools.set('get_expense_report', { name: 'get_expense_report', description: 'Generate expense reports with filtering by date range, users, clients, and categories.', inputSchema: { type: 'object', properties: { from: { type: 'string', format: 'date' }, to: { type: 'string', format: 'date' }, user_id: { type: 'number' }, client_id: { type: 'number' }, project_id: { type: 'number' }, expense_category_id: { type: 'number' }, billable: { type: 'boolean' }, is_billed: { type: 'boolean' }, updated_since: { type: 'string', format: 'date-time' }, group_by: { type: 'string', enum: ['user', 'client', 'project', 'expense_category', 'date'] } }, required: ['from', 'to'], additionalProperties: false } });
+    this.tools.set('get_project_budget_report', { name: 'get_project_budget_report', description: 'Generate project budget reports showing spending vs budgets across projects.', inputSchema: { type: 'object', properties: { is_active: { type: 'boolean' }, client_id: { type: 'number' }, over_budget: { type: 'boolean' } }, additionalProperties: false } });
+    this.tools.set('get_uninvoiced_report', { name: 'get_uninvoiced_report', description: 'Generate reports of uninvoiced time and expenses within a date range.', inputSchema: { type: 'object', properties: { from: { type: 'string', format: 'date' }, to: { type: 'string', format: 'date' }, client_id: { type: 'number' }, project_id: { type: 'number' } }, required: ['from', 'to'], additionalProperties: false } });
+  }
+
+  // All remaining method implementations (simplified for space)
+  private async listInvoices(args: Record<string, any>): Promise<CallToolResult> {
+    const validatedArgs = InvoiceQuerySchema.parse(args);
+    const invoices = await this.harvestClient.getInvoices(validatedArgs);
+    return { content: [{ type: 'text', text: JSON.stringify(invoices, null, 2) }] };
+  }
+  private async getInvoice(args: Record<string, any>): Promise<CallToolResult> {
+    const { invoice_id } = z.object({ invoice_id: z.number() }).parse(args);
+    const invoice = await this.harvestClient.getInvoice(invoice_id);
+    return { content: [{ type: 'text', text: JSON.stringify(invoice, null, 2) }] };
+  }
+  private async createInvoice(args: Record<string, any>): Promise<CallToolResult> {
+    const validatedArgs = CreateInvoiceSchema.parse(args);
+    const invoice = await this.harvestClient.createInvoice(validatedArgs);
+    return { content: [{ type: 'text', text: JSON.stringify(invoice, null, 2) }] };
+  }
+  private async updateInvoice(args: Record<string, any>): Promise<CallToolResult> {
+    const validatedArgs = UpdateInvoiceSchema.parse(args);
+    const invoice = await this.harvestClient.updateInvoice(validatedArgs);
+    return { content: [{ type: 'text', text: JSON.stringify(invoice, null, 2) }] };
+  }
+  private async deleteInvoice(args: Record<string, any>): Promise<CallToolResult> {
+    const { invoice_id } = z.object({ invoice_id: z.number() }).parse(args);
+    await this.harvestClient.deleteInvoice(invoice_id);
+    return { content: [{ type: 'text', text: JSON.stringify({ message: `Invoice ${invoice_id} deleted` }) }] };
+  }
+
+  private async listExpenses(args: Record<string, any>): Promise<CallToolResult> {
+    const validatedArgs = ExpenseQuerySchema.parse(args);
+    const expenses = await this.harvestClient.getExpenses(validatedArgs);
+    return { content: [{ type: 'text', text: JSON.stringify(expenses, null, 2) }] };
+  }
+  private async getExpense(args: Record<string, any>): Promise<CallToolResult> {
+    const { expense_id } = z.object({ expense_id: z.number() }).parse(args);
+    const expense = await this.harvestClient.getExpense(expense_id);
+    return { content: [{ type: 'text', text: JSON.stringify(expense, null, 2) }] };
+  }
+  private async createExpense(args: Record<string, any>): Promise<CallToolResult> {
+    const validatedArgs = CreateExpenseSchema.parse(args);
+    const expense = await this.harvestClient.createExpense(validatedArgs);
+    return { content: [{ type: 'text', text: JSON.stringify(expense, null, 2) }] };
+  }
+  private async updateExpense(args: Record<string, any>): Promise<CallToolResult> {
+    const validatedArgs = UpdateExpenseSchema.parse(args);
+    const expense = await this.harvestClient.updateExpense(validatedArgs);
+    return { content: [{ type: 'text', text: JSON.stringify(expense, null, 2) }] };
+  }
+  private async deleteExpense(args: Record<string, any>): Promise<CallToolResult> {
+    const { expense_id } = z.object({ expense_id: z.number() }).parse(args);
+    await this.harvestClient.deleteExpense(expense_id);
+    return { content: [{ type: 'text', text: JSON.stringify({ message: `Expense ${expense_id} deleted` }) }] };
+  }
+  private async listExpenseCategories(args: Record<string, any>): Promise<CallToolResult> {
+    const validatedArgs = ExpenseCategoryQuerySchema.parse(args);
+    const categories = await this.harvestClient.getExpenseCategories(validatedArgs);
+    return { content: [{ type: 'text', text: JSON.stringify(categories, null, 2) }] };
+  }
+
+  private async listEstimates(args: Record<string, any>): Promise<CallToolResult> {
+    const validatedArgs = EstimateQuerySchema.parse(args);
+    const estimates = await this.harvestClient.getEstimates(validatedArgs);
+    return { content: [{ type: 'text', text: JSON.stringify(estimates, null, 2) }] };
+  }
+  private async getEstimate(args: Record<string, any>): Promise<CallToolResult> {
+    const { estimate_id } = z.object({ estimate_id: z.number() }).parse(args);
+    const estimate = await this.harvestClient.getEstimate(estimate_id);
+    return { content: [{ type: 'text', text: JSON.stringify(estimate, null, 2) }] };
+  }
+  private async createEstimate(args: Record<string, any>): Promise<CallToolResult> {
+    const validatedArgs = CreateEstimateSchema.parse(args);
+    const estimate = await this.harvestClient.createEstimate(validatedArgs);
+    return { content: [{ type: 'text', text: JSON.stringify(estimate, null, 2) }] };
+  }
+  private async updateEstimate(args: Record<string, any>): Promise<CallToolResult> {
+    const validatedArgs = UpdateEstimateSchema.parse(args);
+    const estimate = await this.harvestClient.updateEstimate(validatedArgs);
+    return { content: [{ type: 'text', text: JSON.stringify(estimate, null, 2) }] };
+  }
+  private async deleteEstimate(args: Record<string, any>): Promise<CallToolResult> {
+    const { estimate_id } = z.object({ estimate_id: z.number() }).parse(args);
+    await this.harvestClient.deleteEstimate(estimate_id);
+    return { content: [{ type: 'text', text: JSON.stringify({ message: `Estimate ${estimate_id} deleted` }) }] };
+  }
+
+  private async getTimeReport(args: Record<string, any>): Promise<CallToolResult> {
+    const validatedArgs = TimeReportQuerySchema.parse(args);
+    const report = await this.harvestClient.getTimeReport(validatedArgs);
+    return { content: [{ type: 'text', text: JSON.stringify(report, null, 2) }] };
+  }
+  private async getExpenseReport(args: Record<string, any>): Promise<CallToolResult> {
+    const validatedArgs = ExpenseReportQuerySchema.parse(args);
+    const report = await this.harvestClient.getExpenseReport(validatedArgs);
+    return { content: [{ type: 'text', text: JSON.stringify(report, null, 2) }] };
+  }
+  private async getProjectBudgetReport(args: Record<string, any>): Promise<CallToolResult> {
+    const validatedArgs = ProjectBudgetReportQuerySchema.parse(args);
+    const report = await this.harvestClient.getProjectBudgetReport(validatedArgs);
+    return { content: [{ type: 'text', text: JSON.stringify(report, null, 2) }] };
+  }
+  private async getUninvoicedReport(args: Record<string, any>): Promise<CallToolResult> {
+    const validatedArgs = UninvoicedReportQuerySchema.parse(args);
+    const report = await this.harvestClient.getUninvoicedReport(validatedArgs);
+    return { content: [{ type: 'text', text: JSON.stringify(report, null, 2) }] };
   }
 
   public async close() {

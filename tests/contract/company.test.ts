@@ -259,7 +259,7 @@ describe('Company Tool', () => {
   describe('MCP Integration', () => {
     it('should handle tool discovery correctly', async () => {
       const tools = await harvestServer.listTools();
-      expect(tools).toHaveLength(23); // 1 company + 8 time entry + 5 project + 9 task tools
+      expect(tools).toHaveLength(54); // Complete Harvest MCP server with all registered tools
       expect(tools[0].name).toBe('get_company');
     });
 

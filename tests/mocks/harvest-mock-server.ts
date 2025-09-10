@@ -793,7 +793,132 @@ export class HarvestMockServer {
       }
     });
 
-    // Users endpoint
+    // Individual client endpoint
+    this.responses.set('GET:/v2/clients/5735776', {
+      status: 200,
+      data: {
+        id: 5735776,
+        name: "Acme Corporation",
+        is_active: true,
+        address: "123 Business Ave\nSuite 100\nBusiness City, BC 12345",
+        statement_key: "acme-corp",
+        currency: "USD",
+        created_at: "2024-01-01T00:00:00Z",
+        updated_at: "2024-06-01T00:00:00Z"
+      }
+    });
+
+    // Create client endpoint
+    this.responses.set('POST:/v2/clients', {
+      status: 201,
+      data: {
+        id: 5735777,
+        name: "New Client Corp",
+        is_active: true,
+        address: null,
+        statement_key: null,
+        currency: "USD",
+        created_at: "2025-09-10T00:00:00Z",
+        updated_at: "2025-09-10T00:00:00Z"
+      }
+    });
+
+    // Update client endpoint
+    this.responses.set('PATCH:/v2/clients/5735776', {
+      status: 200,
+      data: {
+        id: 5735776,
+        name: "Updated Acme Corporation",
+        is_active: true,
+        address: "456 New Business Blvd\nSuite 200\nNew City, NC 67890",
+        statement_key: "updated-acme",
+        currency: "USD",
+        created_at: "2024-01-01T00:00:00Z",
+        updated_at: "2025-09-10T10:00:00Z"
+      }
+    });
+
+    // Delete client endpoint
+    this.responses.set('DELETE:/v2/clients/5735776', {
+      status: 200,
+      data: {}
+    });
+
+    // Users endpoints
+    this.responses.set('GET:/v2/users', {
+      status: 200,
+      data: {
+        users: [
+          {
+            id: 1782959,
+            first_name: "John",
+            last_name: "Developer",
+            email: "john@example.com",
+            telephone: "",
+            timezone: "America/New_York",
+            has_access_to_all_future_projects: false,
+            is_contractor: false,
+            is_admin: true,
+            is_project_manager: true,
+            can_see_rates: true,
+            can_create_projects: true,
+            can_create_invoices: true,
+            is_active: true,
+            weekly_capacity: 144000,
+            default_hourly_rate: 100.0,
+            cost_rate: 75.0,
+            roles: ["Administrator", "Project Manager"],
+            access_roles: ["administrator", "project_manager"],
+            avatar_url: "https://secure.gravatar.com/avatar/example?s=140&d=blank",
+            created_at: "2023-01-01T00:00:00Z",
+            updated_at: "2025-01-01T00:00:00Z"
+          }
+        ],
+        per_page: 2000,
+        total_pages: 1,
+        total_entries: 1,
+        next_page: null,
+        previous_page: null,
+        page: 1,
+        links: {
+          first: "https://api.harvestapp.com/v2/users?page=1",
+          next: null,
+          previous: null,
+          last: "https://api.harvestapp.com/v2/users?page=1"
+        }
+      }
+    });
+
+    // Individual user endpoint
+    this.responses.set('GET:/v2/users/1782959', {
+      status: 200,
+      data: {
+        id: 1782959,
+        first_name: "John",
+        last_name: "Developer",
+        email: "john@example.com",
+        telephone: "",
+        timezone: "America/New_York",
+        has_access_to_all_future_projects: false,
+        is_contractor: false,
+        is_admin: true,
+        is_project_manager: true,
+        can_see_rates: true,
+        can_create_projects: true,
+        can_create_invoices: true,
+        is_active: true,
+        weekly_capacity: 144000,
+        default_hourly_rate: 100.0,
+        cost_rate: 75.0,
+        roles: ["Administrator", "Project Manager"],
+        access_roles: ["administrator", "project_manager"],
+        avatar_url: "https://secure.gravatar.com/avatar/example?s=140&d=blank",
+        created_at: "2023-01-01T00:00:00Z",
+        updated_at: "2025-01-01T00:00:00Z"
+      }
+    });
+
+    // Current user endpoint
     this.responses.set('GET:/v2/users/me', {
       status: 200,
       data: {
@@ -811,7 +936,7 @@ export class HarvestMockServer {
         can_create_projects: true,
         can_create_invoices: true,
         is_active: true,
-        weekly_capacity: 144000, // 40 hours in seconds
+        weekly_capacity: 144000,
         default_hourly_rate: 100.0,
         cost_rate: 75.0,
         roles: ["Administrator", "Project Manager"],
@@ -819,6 +944,880 @@ export class HarvestMockServer {
         avatar_url: "https://secure.gravatar.com/avatar/example?s=140&d=blank",
         created_at: "2023-01-01T00:00:00Z",
         updated_at: "2025-01-01T00:00:00Z"
+      }
+    });
+
+    // Create user endpoint
+    this.responses.set('POST:/v2/users', {
+      status: 201,
+      data: {
+        id: 1782960,
+        first_name: "Jane",
+        last_name: "Designer",
+        email: "jane@example.com",
+        telephone: "",
+        timezone: "UTC",
+        has_access_to_all_future_projects: false,
+        is_contractor: false,
+        is_admin: false,
+        is_project_manager: false,
+        can_see_rates: false,
+        can_create_projects: false,
+        can_create_invoices: false,
+        is_active: true,
+        weekly_capacity: 144000,
+        default_hourly_rate: 90.0,
+        cost_rate: 65.0,
+        roles: [],
+        access_roles: [],
+        avatar_url: null,
+        created_at: "2025-09-10T00:00:00Z",
+        updated_at: "2025-09-10T00:00:00Z"
+      }
+    });
+
+    // Update user endpoint
+    this.responses.set('PATCH:/v2/users/1782959', {
+      status: 200,
+      data: {
+        id: 1782959,
+        first_name: "John",
+        last_name: "Senior Developer",
+        email: "john@example.com",
+        telephone: "+1234567890",
+        timezone: "America/New_York",
+        has_access_to_all_future_projects: false,
+        is_contractor: false,
+        is_admin: true,
+        is_project_manager: true,
+        can_see_rates: true,
+        can_create_projects: true,
+        can_create_invoices: true,
+        is_active: true,
+        weekly_capacity: 144000,
+        default_hourly_rate: 120.0,
+        cost_rate: 85.0,
+        roles: ["Administrator", "Project Manager"],
+        access_roles: ["administrator", "project_manager"],
+        avatar_url: "https://secure.gravatar.com/avatar/example?s=140&d=blank",
+        created_at: "2023-01-01T00:00:00Z",
+        updated_at: "2025-09-10T10:00:00Z"
+      }
+    });
+
+    // Delete user endpoint
+    this.responses.set('DELETE:/v2/users/1782959', {
+      status: 200,
+      data: {}
+    });
+
+    // Invoices endpoints
+    this.responses.set('GET:/v2/invoices', {
+      status: 200,
+      data: {
+        invoices: [
+          {
+            id: 13150378,
+            client_key: "9e97f4a0877318709e571a3b19e9b8d30983e2dd",
+            number: "001",
+            purchase_order: "PO-2025-001",
+            amount: 9850.0,
+            due_amount: 9850.0,
+            tax: 0.08,
+            tax_amount: 725.93,
+            tax2: null,
+            tax2_amount: null,
+            discount: null,
+            discount_amount: null,
+            subject: "Web Application Development - January 2025",
+            notes: "Development services for Q1 2025",
+            currency: "USD",
+            state: "open",
+            issue_date: "2025-01-15",
+            due_date: "2025-02-14",
+            payment_term: "NET_30",
+            payment_options: ["ach", "credit_card"],
+            sent_at: "2025-01-15T10:00:00Z",
+            paid_at: null,
+            paid_date: null,
+            closed_at: null,
+            recurring_invoice_id: null,
+            created_at: "2025-01-15T09:00:00Z",
+            updated_at: "2025-01-15T10:00:00Z",
+            client: {
+              id: 5735776,
+              name: "Acme Corporation",
+              currency: "USD"
+            },
+            line_items: [
+              {
+                id: 53341602,
+                kind: "Service",
+                description: "Web Development - 98.5 hours",
+                quantity: 98.5,
+                unit_price: 100.0,
+                amount: 9850.0,
+                taxed: true,
+                taxed2: false,
+                project: {
+                  id: 14307913,
+                  name: "Web Application Project",
+                  code: "WAP"
+                }
+              }
+            ]
+          }
+        ],
+        per_page: 2000,
+        total_pages: 1,
+        total_entries: 1,
+        next_page: null,
+        previous_page: null,
+        page: 1,
+        links: {
+          first: "https://api.harvestapp.com/v2/invoices?page=1",
+          next: null,
+          previous: null,
+          last: "https://api.harvestapp.com/v2/invoices?page=1"
+        }
+      }
+    });
+
+    // Individual invoice endpoint
+    this.responses.set('GET:/v2/invoices/13150378', {
+      status: 200,
+      data: {
+        id: 13150378,
+        client_key: "9e97f4a0877318709e571a3b19e9b8d30983e2dd",
+        number: "001",
+        purchase_order: "PO-2025-001",
+        amount: 9850.0,
+        due_amount: 9850.0,
+        tax: 0.08,
+        tax_amount: 725.93,
+        tax2: null,
+        tax2_amount: null,
+        discount: null,
+        discount_amount: null,
+        subject: "Web Application Development - January 2025",
+        notes: "Development services for Q1 2025",
+        currency: "USD",
+        state: "open",
+        issue_date: "2025-01-15",
+        due_date: "2025-02-14",
+        payment_term: "NET_30",
+        payment_options: ["ach", "credit_card"],
+        sent_at: "2025-01-15T10:00:00Z",
+        paid_at: null,
+        paid_date: null,
+        closed_at: null,
+        recurring_invoice_id: null,
+        created_at: "2025-01-15T09:00:00Z",
+        updated_at: "2025-01-15T10:00:00Z",
+        client: {
+          id: 5735776,
+          name: "Acme Corporation",
+          currency: "USD"
+        },
+        line_items: [
+          {
+            id: 53341602,
+            kind: "Service",
+            description: "Web Development - 98.5 hours",
+            quantity: 98.5,
+            unit_price: 100.0,
+            amount: 9850.0,
+            taxed: true,
+            taxed2: false,
+            project: {
+              id: 14307913,
+              name: "Web Application Project",
+              code: "WAP"
+            }
+          }
+        ]
+      }
+    });
+
+    // Create invoice endpoint
+    this.responses.set('POST:/v2/invoices', {
+      status: 201,
+      data: {
+        id: 13150379,
+        client_key: "new12345678901234567890123456789012345678",
+        number: "002",
+        purchase_order: null,
+        amount: 0.0,
+        due_amount: 0.0,
+        tax: null,
+        tax_amount: null,
+        tax2: null,
+        tax2_amount: null,
+        discount: null,
+        discount_amount: null,
+        subject: "New Invoice",
+        notes: null,
+        currency: "USD",
+        state: "draft",
+        issue_date: "2025-09-10",
+        due_date: "2025-10-10",
+        payment_term: null,
+        payment_options: [],
+        sent_at: null,
+        paid_at: null,
+        paid_date: null,
+        closed_at: null,
+        recurring_invoice_id: null,
+        created_at: "2025-09-10T00:00:00Z",
+        updated_at: "2025-09-10T00:00:00Z",
+        client: {
+          id: 5735776,
+          name: "Acme Corporation",
+          currency: "USD"
+        },
+        line_items: []
+      }
+    });
+
+    // Update invoice endpoint
+    this.responses.set('PATCH:/v2/invoices/13150378', {
+      status: 200,
+      data: {
+        id: 13150378,
+        client_key: "9e97f4a0877318709e571a3b19e9b8d30983e2dd",
+        number: "001-UPDATED",
+        purchase_order: "PO-2025-001-UPD",
+        amount: 9850.0,
+        due_amount: 9850.0,
+        tax: 0.10,
+        tax_amount: 895.45,
+        tax2: null,
+        tax2_amount: null,
+        discount: null,
+        discount_amount: null,
+        subject: "Updated Web Application Development - January 2025",
+        notes: "Updated development services for Q1 2025",
+        currency: "USD",
+        state: "open",
+        issue_date: "2025-01-15",
+        due_date: "2025-02-14",
+        payment_term: "NET_30",
+        payment_options: ["ach", "credit_card"],
+        sent_at: "2025-01-15T10:00:00Z",
+        paid_at: null,
+        paid_date: null,
+        closed_at: null,
+        recurring_invoice_id: null,
+        created_at: "2025-01-15T09:00:00Z",
+        updated_at: "2025-09-10T10:00:00Z",
+        client: {
+          id: 5735776,
+          name: "Acme Corporation",
+          currency: "USD"
+        },
+        line_items: [
+          {
+            id: 53341602,
+            kind: "Service",
+            description: "Web Development - 98.5 hours",
+            quantity: 98.5,
+            unit_price: 100.0,
+            amount: 9850.0,
+            taxed: true,
+            taxed2: false,
+            project: {
+              id: 14307913,
+              name: "Web Application Project",
+              code: "WAP"
+            }
+          }
+        ]
+      }
+    });
+
+    // Delete invoice endpoint
+    this.responses.set('DELETE:/v2/invoices/13150378', {
+      status: 200,
+      data: {}
+    });
+
+    // Expenses endpoints
+    this.responses.set('GET:/v2/expenses', {
+      status: 200,
+      data: {
+        expenses: [
+          {
+            id: 15296442,
+            spent_date: "2025-09-09",
+            notes: "Business lunch with client",
+            total_cost: 85.50,
+            units: 1.0,
+            is_closed: false,
+            is_locked: false,
+            is_billed: false,
+            locked_reason: null,
+            billable: true,
+            created_at: "2025-09-09T12:30:00Z",
+            updated_at: "2025-09-09T12:30:00Z",
+            user: {
+              id: 1782959,
+              name: "John Developer"
+            },
+            user_assignment: {
+              id: 125068553,
+              is_project_manager: false,
+              is_active: true,
+              budget: null,
+              created_at: "2024-01-01T00:00:00Z",
+              updated_at: "2024-06-01T00:00:00Z",
+              hourly_rate: 100.0
+            },
+            expense_category: {
+              id: 864229,
+              name: "Meals",
+              unit_name: null,
+              unit_price: null,
+              is_active: true
+            },
+            client: {
+              id: 5735776,
+              name: "Acme Corporation",
+              currency: "USD"
+            },
+            project: {
+              id: 14307913,
+              name: "Web Application Project",
+              code: "WAP"
+            },
+            invoice: null,
+            receipt: null
+          }
+        ],
+        per_page: 2000,
+        total_pages: 1,
+        total_entries: 1,
+        next_page: null,
+        previous_page: null,
+        page: 1,
+        links: {
+          first: "https://api.harvestapp.com/v2/expenses?page=1",
+          next: null,
+          previous: null,
+          last: "https://api.harvestapp.com/v2/expenses?page=1"
+        }
+      }
+    });
+
+    // Individual expense endpoint
+    this.responses.set('GET:/v2/expenses/15296442', {
+      status: 200,
+      data: {
+        id: 15296442,
+        spent_date: "2025-09-09",
+        notes: "Business lunch with client",
+        total_cost: 85.50,
+        units: 1.0,
+        is_closed: false,
+        is_locked: false,
+        is_billed: false,
+        locked_reason: null,
+        billable: true,
+        created_at: "2025-09-09T12:30:00Z",
+        updated_at: "2025-09-09T12:30:00Z",
+        user: {
+          id: 1782959,
+          name: "John Developer"
+        },
+        user_assignment: {
+          id: 125068553,
+          is_project_manager: false,
+          is_active: true,
+          budget: null,
+          created_at: "2024-01-01T00:00:00Z",
+          updated_at: "2024-06-01T00:00:00Z",
+          hourly_rate: 100.0
+        },
+        expense_category: {
+          id: 864229,
+          name: "Meals",
+          unit_name: null,
+          unit_price: null,
+          is_active: true
+        },
+        client: {
+          id: 5735776,
+          name: "Acme Corporation",
+          currency: "USD"
+        },
+        project: {
+          id: 14307913,
+          name: "Web Application Project",
+          code: "WAP"
+        },
+        invoice: null,
+        receipt: null
+      }
+    });
+
+    // Create expense endpoint
+    this.responses.set('POST:/v2/expenses', {
+      status: 201,
+      data: {
+        id: 15296443,
+        spent_date: "2025-09-10",
+        notes: "Taxi to client meeting",
+        total_cost: 25.00,
+        units: 1.0,
+        is_closed: false,
+        is_locked: false,
+        is_billed: false,
+        locked_reason: null,
+        billable: true,
+        created_at: "2025-09-10T00:00:00Z",
+        updated_at: "2025-09-10T00:00:00Z",
+        user: {
+          id: 1782959,
+          name: "John Developer"
+        },
+        user_assignment: {
+          id: 125068553,
+          is_project_manager: false,
+          is_active: true,
+          budget: null,
+          created_at: "2024-01-01T00:00:00Z",
+          updated_at: "2024-06-01T00:00:00Z",
+          hourly_rate: 100.0
+        },
+        expense_category: {
+          id: 864230,
+          name: "Transportation",
+          unit_name: null,
+          unit_price: null,
+          is_active: true
+        },
+        client: {
+          id: 5735776,
+          name: "Acme Corporation",
+          currency: "USD"
+        },
+        project: {
+          id: 14307913,
+          name: "Web Application Project",
+          code: "WAP"
+        },
+        invoice: null,
+        receipt: null
+      }
+    });
+
+    // Update expense endpoint
+    this.responses.set('PATCH:/v2/expenses/15296442', {
+      status: 200,
+      data: {
+        id: 15296442,
+        spent_date: "2025-09-09",
+        notes: "Updated: Business lunch with client and team",
+        total_cost: 95.75,
+        units: 1.0,
+        is_closed: false,
+        is_locked: false,
+        is_billed: false,
+        locked_reason: null,
+        billable: true,
+        created_at: "2025-09-09T12:30:00Z",
+        updated_at: "2025-09-10T10:00:00Z",
+        user: {
+          id: 1782959,
+          name: "John Developer"
+        },
+        user_assignment: {
+          id: 125068553,
+          is_project_manager: false,
+          is_active: true,
+          budget: null,
+          created_at: "2024-01-01T00:00:00Z",
+          updated_at: "2024-06-01T00:00:00Z",
+          hourly_rate: 100.0
+        },
+        expense_category: {
+          id: 864229,
+          name: "Meals",
+          unit_name: null,
+          unit_price: null,
+          is_active: true
+        },
+        client: {
+          id: 5735776,
+          name: "Acme Corporation",
+          currency: "USD"
+        },
+        project: {
+          id: 14307913,
+          name: "Web Application Project",
+          code: "WAP"
+        },
+        invoice: null,
+        receipt: null
+      }
+    });
+
+    // Delete expense endpoint
+    this.responses.set('DELETE:/v2/expenses/15296442', {
+      status: 200,
+      data: {}
+    });
+
+    // Expense categories endpoint
+    this.responses.set('GET:/v2/expense_categories', {
+      status: 200,
+      data: {
+        expense_categories: [
+          {
+            id: 864229,
+            name: "Meals",
+            unit_name: null,
+            unit_price: null,
+            is_active: true,
+            created_at: "2024-01-01T00:00:00Z",
+            updated_at: "2024-01-01T00:00:00Z"
+          },
+          {
+            id: 864230,
+            name: "Transportation",
+            unit_name: "mile",
+            unit_price: 0.56,
+            is_active: true,
+            created_at: "2024-01-01T00:00:00Z",
+            updated_at: "2024-01-01T00:00:00Z"
+          },
+          {
+            id: 864231,
+            name: "Software",
+            unit_name: null,
+            unit_price: null,
+            is_active: true,
+            created_at: "2024-01-01T00:00:00Z",
+            updated_at: "2024-01-01T00:00:00Z"
+          }
+        ],
+        per_page: 2000,
+        total_pages: 1,
+        total_entries: 3,
+        next_page: null,
+        previous_page: null,
+        page: 1,
+        links: {
+          first: "https://api.harvestapp.com/v2/expense_categories?page=1",
+          next: null,
+          previous: null,
+          last: "https://api.harvestapp.com/v2/expense_categories?page=1"
+        }
+      }
+    });
+
+    // Estimates endpoints
+    this.responses.set('GET:/v2/estimates', {
+      status: 200,
+      data: {
+        estimates: [
+          {
+            id: 1439814,
+            client_key: "estimate123456789012345678901234567890",
+            number: "EST-001",
+            purchase_order: "PO-EST-2025-001",
+            amount: 15000.0,
+            tax: 0.08,
+            tax_amount: 1111.11,
+            tax2: null,
+            tax2_amount: null,
+            discount: null,
+            discount_amount: null,
+            subject: "Web Application Development Estimate",
+            notes: "Estimated development work for Q1 2025",
+            currency: "USD",
+            state: "sent",
+            issue_date: "2024-12-15",
+            sent_at: "2024-12-15T14:00:00Z",
+            accepted_at: null,
+            declined_at: null,
+            created_at: "2024-12-15T10:00:00Z",
+            updated_at: "2024-12-15T14:00:00Z",
+            client: {
+              id: 5735776,
+              name: "Acme Corporation",
+              currency: "USD"
+            },
+            creator: {
+              id: 1782959,
+              name: "John Developer"
+            },
+            line_items: [
+              {
+                id: 1234567,
+                kind: "Service",
+                description: "Web Development - 150 hours",
+                quantity: 150.0,
+                unit_price: 100.0,
+                amount: 15000.0,
+                taxed: true,
+                taxed2: false
+              }
+            ]
+          }
+        ],
+        per_page: 2000,
+        total_pages: 1,
+        total_entries: 1,
+        next_page: null,
+        previous_page: null,
+        page: 1,
+        links: {
+          first: "https://api.harvestapp.com/v2/estimates?page=1",
+          next: null,
+          previous: null,
+          last: "https://api.harvestapp.com/v2/estimates?page=1"
+        }
+      }
+    });
+
+    // Individual estimate endpoint
+    this.responses.set('GET:/v2/estimates/1439814', {
+      status: 200,
+      data: {
+        id: 1439814,
+        client_key: "estimate123456789012345678901234567890",
+        number: "EST-001",
+        purchase_order: "PO-EST-2025-001",
+        amount: 15000.0,
+        tax: 0.08,
+        tax_amount: 1111.11,
+        tax2: null,
+        tax2_amount: null,
+        discount: null,
+        discount_amount: null,
+        subject: "Web Application Development Estimate",
+        notes: "Estimated development work for Q1 2025",
+        currency: "USD",
+        state: "sent",
+        issue_date: "2024-12-15",
+        sent_at: "2024-12-15T14:00:00Z",
+        accepted_at: null,
+        declined_at: null,
+        created_at: "2024-12-15T10:00:00Z",
+        updated_at: "2024-12-15T14:00:00Z",
+        client: {
+          id: 5735776,
+          name: "Acme Corporation",
+          currency: "USD"
+        },
+        creator: {
+          id: 1782959,
+          name: "John Developer"
+        },
+        line_items: [
+          {
+            id: 1234567,
+            kind: "Service",
+            description: "Web Development - 150 hours",
+            quantity: 150.0,
+            unit_price: 100.0,
+            amount: 15000.0,
+            taxed: true,
+            taxed2: false
+          }
+        ]
+      }
+    });
+
+    // Create estimate endpoint
+    this.responses.set('POST:/v2/estimates', {
+      status: 201,
+      data: {
+        id: 1439815,
+        client_key: "newestimate012345678901234567890123456",
+        number: "EST-002",
+        purchase_order: null,
+        amount: 0.0,
+        tax: null,
+        tax_amount: null,
+        tax2: null,
+        tax2_amount: null,
+        discount: null,
+        discount_amount: null,
+        subject: "New Estimate",
+        notes: null,
+        currency: "USD",
+        state: "draft",
+        issue_date: "2025-09-10",
+        sent_at: null,
+        accepted_at: null,
+        declined_at: null,
+        created_at: "2025-09-10T00:00:00Z",
+        updated_at: "2025-09-10T00:00:00Z",
+        client: {
+          id: 5735776,
+          name: "Acme Corporation",
+          currency: "USD"
+        },
+        creator: {
+          id: 1782959,
+          name: "John Developer"
+        },
+        line_items: []
+      }
+    });
+
+    // Update estimate endpoint
+    this.responses.set('PATCH:/v2/estimates/1439814', {
+      status: 200,
+      data: {
+        id: 1439814,
+        client_key: "estimate123456789012345678901234567890",
+        number: "EST-001-UPDATED",
+        purchase_order: "PO-EST-2025-001-UPD",
+        amount: 18000.0,
+        tax: 0.10,
+        tax_amount: 1636.36,
+        tax2: null,
+        tax2_amount: null,
+        discount: null,
+        discount_amount: null,
+        subject: "Updated Web Application Development Estimate",
+        notes: "Updated estimated development work for Q1 2025",
+        currency: "USD",
+        state: "sent",
+        issue_date: "2024-12-15",
+        sent_at: "2024-12-15T14:00:00Z",
+        accepted_at: null,
+        declined_at: null,
+        created_at: "2024-12-15T10:00:00Z",
+        updated_at: "2025-09-10T10:00:00Z",
+        client: {
+          id: 5735776,
+          name: "Acme Corporation",
+          currency: "USD"
+        },
+        creator: {
+          id: 1782959,
+          name: "John Developer"
+        },
+        line_items: [
+          {
+            id: 1234567,
+            kind: "Service",
+            description: "Updated Web Development - 180 hours",
+            quantity: 180.0,
+            unit_price: 100.0,
+            amount: 18000.0,
+            taxed: true,
+            taxed2: false
+          }
+        ]
+      }
+    });
+
+    // Delete estimate endpoint
+    this.responses.set('DELETE:/v2/estimates/1439814', {
+      status: 200,
+      data: {}
+    });
+
+    // Reports endpoints
+    this.responses.set('GET:/v2/reports/time', {
+      status: 200,
+      data: {
+        results: [
+          {
+            user_id: 1782959,
+            user_name: "John Developer",
+            client_id: 5735776,
+            client_name: "Acme Corporation",
+            project_id: 14307913,
+            project_name: "Web Application Project",
+            task_id: 8083365,
+            task_name: "Development",
+            total_hours: 98.5,
+            billable_hours: 98.5,
+            currency: "USD",
+            billable_amount: 9850.0
+          }
+        ],
+        total_hours: 98.5,
+        total_billable_hours: 98.5,
+        total_amount: 9850.0,
+        total_billable_amount: 9850.0,
+        currency: "USD"
+      }
+    });
+
+    this.responses.set('GET:/v2/reports/expenses', {
+      status: 200,
+      data: {
+        results: [
+          {
+            user_id: 1782959,
+            user_name: "John Developer",
+            client_id: 5735776,
+            client_name: "Acme Corporation",
+            project_id: 14307913,
+            project_name: "Web Application Project",
+            expense_category_id: 864229,
+            expense_category_name: "Meals",
+            total_amount: 85.50,
+            billable_amount: 85.50,
+            currency: "USD"
+          }
+        ],
+        total_amount: 85.50,
+        total_billable_amount: 85.50,
+        currency: "USD"
+      }
+    });
+
+    this.responses.set('GET:/v2/reports/project_budget', {
+      status: 200,
+      data: {
+        results: [
+          {
+            client_id: 5735776,
+            client_name: "Acme Corporation",
+            project_id: 14307913,
+            project_name: "Web Application Project",
+            project_code: "WAP",
+            budget_hours: 500.0,
+            budget_amount: 50000.0,
+            budget_by: "project",
+            is_active: true,
+            over_budget: false,
+            spent_hours: 98.5,
+            spent_amount: 9935.50,
+            remaining_hours: 401.5,
+            remaining_amount: 40064.50,
+            currency: "USD"
+          }
+        ]
+      }
+    });
+
+    this.responses.set('GET:/v2/reports/uninvoiced', {
+      status: 200,
+      data: {
+        results: [
+          {
+            client_id: 5735776,
+            client_name: "Acme Corporation",
+            project_id: 14307913,
+            project_name: "Web Application Project",
+            uninvoiced_hours: 15.25,
+            uninvoiced_expenses: 25.00,
+            uninvoiced_amount: 1550.00,
+            currency: "USD"
+          }
+        ],
+        total_hours: 15.25,
+        total_expenses: 25.00,
+        total_amount: 1550.00,
+        currency: "USD"
       }
     });
 
