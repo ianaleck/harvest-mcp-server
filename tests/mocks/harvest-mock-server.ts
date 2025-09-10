@@ -13,7 +13,7 @@ export interface MockResponse {
 }
 
 export class HarvestMockServer {
-  private responses: Map<string, MockResponse> = new Map();
+  public responses: Map<string, MockResponse> = new Map();
 
   constructor() {
     this.setupMockResponses();
@@ -45,7 +45,7 @@ export class HarvestMockServer {
       }
     });
 
-    // Time Entries endpoints
+    // Time Entries endpoints - List with pagination
     this.responses.set('GET:/v2/time_entries', {
       status: 200,
       data: {
@@ -157,24 +157,24 @@ export class HarvestMockServer {
       }
     });
 
-    // POST Time Entry
+    // POST Time Entry (handles both regular creation and timer start)
     this.responses.set('POST:/v2/time_entries', {
       status: 201,
       data: {
         id: 636709356,
         spent_date: "2025-09-10",
-        hours: 2.5,
+        hours: 2.5, // Hours calculated from 09:00 to 11:30
         hours_without_timer: 2.5,
         rounded_hours: 2.5,
-        notes: "Code review and testing",
+        notes: "Morning development work",
         is_locked: false,
         locked_reason: null,
         is_closed: false,
         is_billed: false,
-        timer_started_at: null,
-        started_time: null,
-        ended_time: null,
-        is_running: false,
+        timer_started_at: null, // Not a timer entry
+        started_time: "09:00",
+        ended_time: "11:30",
+        is_running: false, // Regular time entry, not running
         billable: true,
         budgeted: true,
         billable_rate: 100.0,
@@ -202,6 +202,173 @@ export class HarvestMockServer {
         },
         invoice: null,
         external_reference: null
+      }
+    });
+
+    // PATCH Time Entry (Update)
+    this.responses.set('PATCH:/v2/time_entries/636709355', {
+      status: 200,
+      data: {
+        id: 636709355,
+        spent_date: "2025-09-10",
+        hours: 7.5, // Updated hours
+        hours_without_timer: 7.5,
+        rounded_hours: 7.5,
+        notes: "Updated: Development work on authentication system",
+        is_locked: false,
+        locked_reason: null,
+        is_closed: false,
+        is_billed: false,
+        timer_started_at: null,
+        started_time: "09:00",
+        ended_time: "16:30", // Updated end time
+        is_running: false,
+        billable: true,
+        budgeted: true,
+        billable_rate: 100.0,
+        cost_rate: 75.0,
+        created_at: "2025-09-10T09:00:00Z",
+        updated_at: "2025-09-10T16:30:00Z", // Updated timestamp
+        user: {
+          id: 1782959,
+          name: "John Developer",
+          email: "john@example.com"
+        },
+        project: {
+          id: 14307913,
+          name: "Web Application Project",
+          code: "WAP"
+        },
+        task: {
+          id: 8083365,
+          name: "Development"
+        },
+        client: {
+          id: 5735776,
+          name: "Acme Corporation",
+          currency: "USD"
+        },
+        invoice: null,
+        external_reference: null
+      }
+    });
+
+    // DELETE Time Entry
+    this.responses.set('DELETE:/v2/time_entries/636709355', {
+      status: 200,
+      data: {} // Harvest returns empty object on successful delete
+    });
+
+    // Stop Timer
+    this.responses.set('PATCH:/v2/time_entries/636709357/stop', {
+      status: 200,
+      data: {
+        id: 636709357,
+        spent_date: "2025-09-10",
+        hours: 2.5, // Calculated hours after stopping
+        hours_without_timer: 2.5,
+        rounded_hours: 2.5,
+        notes: "Timer started for new task",
+        is_locked: false,
+        locked_reason: null,
+        is_closed: false,
+        is_billed: false,
+        timer_started_at: null, // Cleared when stopped
+        started_time: "14:30",
+        ended_time: "17:00", // Set when timer stopped
+        is_running: false, // Now stopped
+        billable: true,
+        budgeted: true,
+        billable_rate: 100.0,
+        cost_rate: 75.0,
+        created_at: "2025-09-10T14:30:00Z",
+        updated_at: "2025-09-10T17:00:00Z", // Updated when stopped
+        user: {
+          id: 1782959,
+          name: "John Developer",
+          email: "john@example.com"
+        },
+        project: {
+          id: 14307913,
+          name: "Web Application Project",
+          code: "WAP"
+        },
+        task: {
+          id: 8083365,
+          name: "Development"
+        },
+        client: {
+          id: 5735776,
+          name: "Acme Corporation",
+          currency: "USD"
+        },
+        invoice: null,
+        external_reference: null
+      }
+    });
+
+    // Restart Timer
+    this.responses.set('PATCH:/v2/time_entries/636709355/restart', {
+      status: 200,
+      data: {
+        id: 636709358, // New entry created from restart
+        spent_date: "2025-09-10",
+        hours: 0, // Fresh timer, no hours yet
+        hours_without_timer: 0,
+        rounded_hours: 0,
+        notes: "Development work on authentication system", // Copied from original
+        is_locked: false,
+        locked_reason: null,
+        is_closed: false,
+        is_billed: false,
+        timer_started_at: "2025-09-10T15:45:00Z", // Restarted time
+        started_time: "15:45",
+        ended_time: null, // Running again
+        is_running: true, // Restarted and running
+        billable: true,
+        budgeted: true,
+        billable_rate: 100.0,
+        cost_rate: 75.0,
+        created_at: "2025-09-10T15:45:00Z",
+        updated_at: "2025-09-10T15:45:00Z",
+        user: {
+          id: 1782959,
+          name: "John Developer",
+          email: "john@example.com"
+        },
+        project: {
+          id: 14307913,
+          name: "Web Application Project",
+          code: "WAP"
+        },
+        task: {
+          id: 8083365,
+          name: "Development"
+        },
+        client: {
+          id: 5735776,
+          name: "Acme Corporation",
+          currency: "USD"
+        },
+        invoice: null,
+        external_reference: null
+      }
+    });
+
+    // Error responses for testing
+    this.responses.set('GET:/v2/time_entries/999999999', {
+      status: 404,
+      data: {
+        error: "not_found",
+        error_description: "The time entry you requested does not exist."
+      }
+    });
+
+    this.responses.set('DELETE:/v2/time_entries/999999999', {
+      status: 404,
+      data: {
+        error: "not_found", 
+        error_description: "The time entry you requested does not exist."
       }
     });
 
@@ -345,6 +512,27 @@ export class HarvestMockServer {
     });
   }
 
+  // Add missing HTTP methods to match axios interface
+  async get(url: string, config?: any) {
+    return this.request({ method: 'GET', url, headers: config?.headers });
+  }
+
+  async post(url: string, data?: any, config?: any) {
+    return this.request({ method: 'POST', url, data, headers: config?.headers });
+  }
+
+  async patch(url: string, data?: any, config?: any) {
+    return this.request({ method: 'PATCH', url, data, headers: config?.headers });
+  }
+
+  async put(url: string, data?: any, config?: any) {
+    return this.request({ method: 'PUT', url, data, headers: config?.headers });
+  }
+
+  async delete(url: string, config?: any) {
+    return this.request({ method: 'DELETE', url, headers: config?.headers });
+  }
+
   /**
    * Mock HTTP request - simulates axios calls
    */
@@ -365,14 +553,59 @@ export class HarvestMockServer {
       return this.responses.get('ERROR:401')!;
     }
 
-    // Extract path from full URL
-    const urlPath = url.replace('https://api.harvestapp.com', '');
-    const key = `${method.toUpperCase()}:${urlPath}`;
+    // Extract path from full URL and remove query parameters
+    let urlPath = url.replace('https://api.harvestapp.com', '');
+    // Remove query parameters for key lookup
+    const baseUrlPath = urlPath.split('?')[0];
+    const key = `${method.toUpperCase()}:${baseUrlPath}`;
     
-    const response = this.responses.get(key);
+    let response = this.responses.get(key);
     
     if (!response) {
       return this.responses.get('ERROR:404')!;
+    }
+
+    // Special handling for POST time_entries - differentiate between timer start and regular creation
+    if (method.toUpperCase() === 'POST' && baseUrlPath === '/v2/time_entries' && config.data) {
+      const data = config.data;
+      
+      // If no hours and no start/end time, this is likely a timer start
+      const isTimerStart = !data.hours && !data.started_time && !data.ended_time;
+      
+      if (isTimerStart) {
+        // Return a running timer response
+        response = {
+          status: 201,
+          data: {
+            ...response.data,
+            hours: 0,
+            hours_without_timer: 0,
+            rounded_hours: 0,
+            notes: data.notes || "Timer started for new task",
+            timer_started_at: "2025-09-10T14:00:00Z",
+            started_time: null,
+            ended_time: null,
+            is_running: true,
+          }
+        };
+      } else if (data.started_time && data.ended_time) {
+        // Return a time entry with the specified times
+        response = {
+          status: 201,
+          data: {
+            ...response.data,
+            hours: 2.5, // Could calculate from times
+            hours_without_timer: 2.5,
+            rounded_hours: 2.5,
+            notes: data.notes || "Morning development work",
+            timer_started_at: null,
+            started_time: data.started_time,
+            ended_time: data.ended_time,
+            is_running: false,
+          }
+        };
+      }
+      // For other cases (hours specified), keep the default response
     }
 
     // Simulate network delay

@@ -339,7 +339,7 @@ export class HarvestMCPServer {
     } catch (error) {
       if (error instanceof z.ZodError) {
         logger.error('Invalid time entries query parameters:', error.errors);
-        throw new Error(`Invalid query parameters: ${error.errors.map(e => e.message).join(', ')}`);
+        throw new Error(`Invalid parameters: ${error.errors.map(e => e.message).join(', ')}`);
       }
       logger.error('Failed to list time entries:', error);
       throw new Error(`Failed to retrieve time entries: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -535,7 +535,7 @@ export class HarvestMCPServer {
         return tool.name.includes('company') || tool.name === 'get_company';
       }
       if (category === 'time_entries') {
-        return tool.name.includes('time_entry') || tool.name.includes('timer');
+        return tool.name.includes('time_entry') || tool.name.includes('time_entries') || tool.name.includes('timer');
       }
       return false;
     });

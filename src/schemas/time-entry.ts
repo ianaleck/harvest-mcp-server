@@ -36,7 +36,7 @@ export const TimeEntryClientSchema = z.object({
 export const TimeEntryInvoiceSchema = z.object({
   id: z.number().int().positive(),
   number: z.string().min(1),
-}).optional();
+}).nullable();
 
 // External reference for integrations
 export const TimeEntryExternalReferenceSchema = z.object({
@@ -44,7 +44,7 @@ export const TimeEntryExternalReferenceSchema = z.object({
   group_id: z.string().optional(),
   account_id: z.string().optional(),
   permalink: z.string().url().optional(),
-}).optional();
+}).nullable();
 
 // Main time entry schema
 export const TimeEntrySchema = z.object({
