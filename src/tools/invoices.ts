@@ -13,15 +13,12 @@ import {
   InvoiceQuerySchema,
   CreateInvoiceSchema,
   UpdateInvoiceSchema,
-  type InvoiceQuery,
-  type CreateInvoiceInput,
-  type UpdateInvoiceInput
 } from '../schemas/invoice';
 
 const logger = createLogger('invoice-tools');
 
 class ListInvoicesHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -39,7 +36,7 @@ class ListInvoicesHandler implements ToolHandler {
 }
 
 class GetInvoiceHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -59,7 +56,7 @@ class GetInvoiceHandler implements ToolHandler {
 }
 
 class CreateInvoiceHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -77,7 +74,7 @@ class CreateInvoiceHandler implements ToolHandler {
 }
 
 class UpdateInvoiceHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -95,7 +92,7 @@ class UpdateInvoiceHandler implements ToolHandler {
 }
 
 class DeleteInvoiceHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {

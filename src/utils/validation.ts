@@ -4,7 +4,7 @@
  */
 
 import { z } from 'zod';
-import { ValidationError, handleValidationError } from './errors';
+import { handleValidationError } from './errors';
 
 export function validateInput<T>(
   schema: z.ZodSchema<T>, 
@@ -66,7 +66,7 @@ export function createDateTimeValidator(fieldName: string = 'datetime') {
 }
 
 export function createTimeValidator(fieldName: string = 'time') {
-  return z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
+  return z.string().regex(/^([0-1]?\d|2[0-3]):[0-5]\d$/, {
     message: `${fieldName} must be in HH:MM format (24-hour)`
   });
 }

@@ -21,7 +21,7 @@ import {
 const logger = createLogger('time-entry-tools');
 
 class ListTimeEntriesHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -39,7 +39,7 @@ class ListTimeEntriesHandler implements ToolHandler {
 }
 
 class GetTimeEntryHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -59,7 +59,7 @@ class GetTimeEntryHandler implements ToolHandler {
 }
 
 class CreateTimeEntryHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -77,7 +77,7 @@ class CreateTimeEntryHandler implements ToolHandler {
 }
 
 class UpdateTimeEntryHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -95,7 +95,7 @@ class UpdateTimeEntryHandler implements ToolHandler {
 }
 
 class DeleteTimeEntryHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -115,7 +115,7 @@ class DeleteTimeEntryHandler implements ToolHandler {
 }
 
 class StartTimerHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -133,7 +133,7 @@ class StartTimerHandler implements ToolHandler {
 }
 
 class StopTimerHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -151,7 +151,7 @@ class StopTimerHandler implements ToolHandler {
 }
 
 class RestartTimerHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {

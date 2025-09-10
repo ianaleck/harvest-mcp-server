@@ -57,13 +57,11 @@ import {
   CreateInvoiceSchema,
   UpdateInvoiceSchema,
   InvoiceQuerySchema,
-  CreateInvoiceLineItemSchema,
   type Invoice,
   type InvoicesList,
   type CreateInvoiceInput,
   type UpdateInvoiceInput,
-  type InvoiceQuery,
-  type CreateInvoiceLineItemInput
+  type InvoiceQuery
 } from '../schemas/invoice';
 
 // Expense imports
@@ -73,20 +71,14 @@ import {
   CreateExpenseSchema,
   UpdateExpenseSchema,
   ExpenseQuerySchema,
-  ExpenseCategorySchema,
   ExpenseCategoriesListSchema,
-  CreateExpenseCategorySchema,
-  UpdateExpenseCategorySchema,
   ExpenseCategoryQuerySchema,
   type Expense,
   type ExpensesList,
   type CreateExpenseInput,
   type UpdateExpenseInput,
   type ExpenseQuery,
-  type ExpenseCategory,
   type ExpenseCategoriesList,
-  type CreateExpenseCategoryInput,
-  type UpdateExpenseCategoryInput,
   type ExpenseCategoryQuery
 } from '../schemas/expense';
 
@@ -97,19 +89,11 @@ import {
   CreateEstimateSchema,
   UpdateEstimateSchema,
   EstimateQuerySchema,
-  SendEstimateSchema,
-  AcceptEstimateSchema,
-  DeclineEstimateSchema,
-  EstimateItemCategoriesListSchema,
   type Estimate,
   type EstimatesList,
   type CreateEstimateInput,
   type UpdateEstimateInput,
   type EstimateQuery,
-  type SendEstimateInput,
-  type AcceptEstimateInput,
-  type DeclineEstimateInput,
-  type EstimateItemCategoriesList
 } from '../schemas/estimate';
 
 // Report imports
@@ -118,7 +102,6 @@ import {
   ExpenseReportSchema,
   ProjectBudgetReportsSchema,
   UninvoicedReportsSchema,
-  TeamTimeReportSchema,
   TimeReportQuerySchema,
   ExpenseReportQuerySchema,
   ProjectBudgetReportQuerySchema,
@@ -127,7 +110,6 @@ import {
   type ExpenseReport,
   type ProjectBudgetReports,
   type UninvoicedReports,
-  type TeamTimeReport,
   type TimeReportQuery,
   type ExpenseReportQuery,
   type ProjectBudgetReportQuery,
@@ -145,9 +127,9 @@ export interface HarvestAPIOptions {
 }
 
 export class HarvestAPIClient {
-  private client: AxiosInstance;
-  private accessToken: string;
-  private accountId: string;
+  private readonly client: AxiosInstance;
+  private readonly accessToken: string;
+  private readonly accountId: string;
 
   constructor(options: HarvestAPIOptions) {
     this.accessToken = options.accessToken;

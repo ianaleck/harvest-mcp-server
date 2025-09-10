@@ -11,7 +11,7 @@ import { BaseToolConfig, ToolHandler, ToolRegistration } from '../types';
 const logger = createLogger('company-tools');
 
 class CompanyToolHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {

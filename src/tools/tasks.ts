@@ -18,7 +18,7 @@ import {
 const logger = createLogger('task-tools');
 
 class ListTasksHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -36,7 +36,7 @@ class ListTasksHandler implements ToolHandler {
 }
 
 class GetTaskHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -56,7 +56,7 @@ class GetTaskHandler implements ToolHandler {
 }
 
 class CreateTaskHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -74,7 +74,7 @@ class CreateTaskHandler implements ToolHandler {
 }
 
 class UpdateTaskHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -92,7 +92,7 @@ class UpdateTaskHandler implements ToolHandler {
 }
 
 class DeleteTaskHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {

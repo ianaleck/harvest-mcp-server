@@ -4,7 +4,6 @@
  */
 
 import { CallToolResult } from '@modelcontextprotocol/sdk/types';
-import { z } from 'zod';
 import { createLogger } from '../utils/logger';
 import { handleMCPToolError } from '../utils/errors';
 import { validateInput } from '../utils/validation';
@@ -19,7 +18,7 @@ import {
 const logger = createLogger('report-tools');
 
 class GetTimeReportHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -37,7 +36,7 @@ class GetTimeReportHandler implements ToolHandler {
 }
 
 class GetExpenseReportHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -55,7 +54,7 @@ class GetExpenseReportHandler implements ToolHandler {
 }
 
 class GetProjectBudgetReportHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -73,7 +72,7 @@ class GetProjectBudgetReportHandler implements ToolHandler {
 }
 
 class GetUninvoicedReportHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {

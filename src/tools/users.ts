@@ -18,7 +18,7 @@ import {
 const logger = createLogger('user-tools');
 
 class ListUsersHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -36,7 +36,7 @@ class ListUsersHandler implements ToolHandler {
 }
 
 class GetUserHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -56,7 +56,7 @@ class GetUserHandler implements ToolHandler {
 }
 
 class GetCurrentUserHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -73,7 +73,7 @@ class GetCurrentUserHandler implements ToolHandler {
 }
 
 class CreateUserHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -91,7 +91,7 @@ class CreateUserHandler implements ToolHandler {
 }
 
 class UpdateUserHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -109,7 +109,7 @@ class UpdateUserHandler implements ToolHandler {
 }
 
 class DeleteUserHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {

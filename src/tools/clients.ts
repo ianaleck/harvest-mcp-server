@@ -18,7 +18,7 @@ import {
 const logger = createLogger('client-tools');
 
 class ListClientsHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -36,7 +36,7 @@ class ListClientsHandler implements ToolHandler {
 }
 
 class GetClientHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -56,7 +56,7 @@ class GetClientHandler implements ToolHandler {
 }
 
 class CreateClientHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -74,7 +74,7 @@ class CreateClientHandler implements ToolHandler {
 }
 
 class UpdateClientHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -92,7 +92,7 @@ class UpdateClientHandler implements ToolHandler {
 }
 
 class DeleteClientHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {

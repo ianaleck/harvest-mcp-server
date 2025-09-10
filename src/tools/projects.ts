@@ -23,7 +23,7 @@ import {
 const logger = createLogger('project-tools');
 
 class ListProjectsHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -41,7 +41,7 @@ class ListProjectsHandler implements ToolHandler {
 }
 
 class GetProjectHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -61,7 +61,7 @@ class GetProjectHandler implements ToolHandler {
 }
 
 class CreateProjectHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -79,7 +79,7 @@ class CreateProjectHandler implements ToolHandler {
 }
 
 class UpdateProjectHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -97,7 +97,7 @@ class UpdateProjectHandler implements ToolHandler {
 }
 
 class DeleteProjectHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -117,7 +117,7 @@ class DeleteProjectHandler implements ToolHandler {
 }
 
 class ListProjectTaskAssignmentsHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -135,7 +135,7 @@ class ListProjectTaskAssignmentsHandler implements ToolHandler {
 }
 
 class CreateProjectTaskAssignmentHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -153,7 +153,7 @@ class CreateProjectTaskAssignmentHandler implements ToolHandler {
 }
 
 class UpdateProjectTaskAssignmentHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -174,7 +174,7 @@ class UpdateProjectTaskAssignmentHandler implements ToolHandler {
 }
 
 class DeleteProjectTaskAssignmentHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {

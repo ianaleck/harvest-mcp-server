@@ -14,16 +14,12 @@ import {
   CreateExpenseSchema,
   UpdateExpenseSchema,
   ExpenseCategoryQuerySchema,
-  type ExpenseQuery,
-  type CreateExpenseInput,
-  type UpdateExpenseInput,
-  type ExpenseCategoryQuery
 } from '../schemas/expense';
 
 const logger = createLogger('expense-tools');
 
 class ListExpensesHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -41,7 +37,7 @@ class ListExpensesHandler implements ToolHandler {
 }
 
 class GetExpenseHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -61,7 +57,7 @@ class GetExpenseHandler implements ToolHandler {
 }
 
 class CreateExpenseHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -79,7 +75,7 @@ class CreateExpenseHandler implements ToolHandler {
 }
 
 class UpdateExpenseHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -97,7 +93,7 @@ class UpdateExpenseHandler implements ToolHandler {
 }
 
 class DeleteExpenseHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -117,7 +113,7 @@ class DeleteExpenseHandler implements ToolHandler {
 }
 
 class ListExpenseCategoriesHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {

@@ -13,15 +13,12 @@ import {
   EstimateQuerySchema,
   CreateEstimateSchema,
   UpdateEstimateSchema,
-  type EstimateQuery,
-  type CreateEstimateInput,
-  type UpdateEstimateInput
 } from '../schemas/estimate';
 
 const logger = createLogger('estimate-tools');
 
 class ListEstimatesHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -39,7 +36,7 @@ class ListEstimatesHandler implements ToolHandler {
 }
 
 class GetEstimateHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -59,7 +56,7 @@ class GetEstimateHandler implements ToolHandler {
 }
 
 class CreateEstimateHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -77,7 +74,7 @@ class CreateEstimateHandler implements ToolHandler {
 }
 
 class UpdateEstimateHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
@@ -95,7 +92,7 @@ class UpdateEstimateHandler implements ToolHandler {
 }
 
 class DeleteEstimateHandler implements ToolHandler {
-  constructor(private config: BaseToolConfig) {}
+  constructor(private readonly config: BaseToolConfig) {}
 
   async execute(args: Record<string, any>): Promise<CallToolResult> {
     try {
