@@ -3,7 +3,7 @@
  * Handles client management and relationship operations
  */
 
-import { CallToolResult } from '@modelcontextprotocol/sdk/types';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { createLogger } from '../utils/logger';
 import { handleMCPToolError } from '../utils/errors';
@@ -30,7 +30,7 @@ class ListClientsHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(clients, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'list_clients');
+      return handleMCPToolError(error, 'list_clients');
     }
   }
 }
@@ -50,7 +50,7 @@ class GetClientHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(client, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'get_client');
+      return handleMCPToolError(error, 'get_client');
     }
   }
 }
@@ -68,7 +68,7 @@ class CreateClientHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(client, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'create_client');
+      return handleMCPToolError(error, 'create_client');
     }
   }
 }
@@ -86,7 +86,7 @@ class UpdateClientHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(client, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'update_client');
+      return handleMCPToolError(error, 'update_client');
     }
   }
 }
@@ -106,7 +106,7 @@ class DeleteClientHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify({ message: `Client ${client_id} deleted successfully` }, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'delete_client');
+      return handleMCPToolError(error, 'delete_client');
     }
   }
 }

@@ -12,7 +12,7 @@ export const ClientSchema = z.object({
   is_active: z.boolean(),
   address: z.string().nullable(),
   statement_key: z.string().nullable(),
-  currency: z.string().length(3), // ISO currency code
+  currency: z.string().length(3).optional(), // ISO currency code
   created_at: z.string().datetime({ offset: true }),
   updated_at: z.string().datetime({ offset: true }),
 });

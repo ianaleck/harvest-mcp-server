@@ -127,8 +127,8 @@ export const TeamTimeReportSchema = z.object({
 
 // Query parameters for time reports
 export const TimeReportQuerySchema = z.object({
-  from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   user_id: z.number().int().positive().optional(),
   client_id: z.number().int().positive().optional(),
   project_id: z.number().int().positive().optional(),
@@ -142,8 +142,8 @@ export const TimeReportQuerySchema = z.object({
 
 // Query parameters for expense reports
 export const ExpenseReportQuerySchema = z.object({
-  from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   user_id: z.number().int().positive().optional(),
   client_id: z.number().int().positive().optional(),
   project_id: z.number().int().positive().optional(),
@@ -163,8 +163,8 @@ export const ProjectBudgetReportQuerySchema = z.object({
 
 // Query parameters for uninvoiced reports
 export const UninvoicedReportQuerySchema = z.object({
-  from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   client_id: z.number().int().positive().optional(),
   project_id: z.number().int().positive().optional(),
 });

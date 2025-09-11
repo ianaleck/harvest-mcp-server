@@ -9,7 +9,7 @@ import { z } from 'zod';
 export const ProjectClientSchema = z.object({
   id: z.number().int().positive(),
   name: z.string().min(1),
-  currency: z.string().length(3), // ISO currency code
+  currency: z.string().length(3).optional(), // ISO currency code
 });
 
 // Main project schema
@@ -24,13 +24,13 @@ export const ProjectSchema = z.object({
   hourly_rate: z.number().min(0).nullable(),
   budget: z.number().min(0).nullable(),
   budget_by: z.enum(['project', 'project_cost', 'task', 'task_fees', 'person', 'none']).nullable(),
-  budget_is_monthly: z.boolean(),
-  notify_when_over_budget: z.boolean(),
+  budget_is_monthly: z.boolean().optional(),
+  notify_when_over_budget: z.boolean().optional(),
   over_budget_notification_percentage: z.number().min(0).max(100).nullable(),
   over_budget_notification_date: z.string().datetime({ offset: true }).nullable(),
-  show_budget_to_all: z.boolean(),
+  show_budget_to_all: z.boolean().optional(),
   cost_budget: z.number().min(0).nullable(),
-  cost_budget_include_expenses: z.boolean(),
+  cost_budget_include_expenses: z.boolean().optional(),
   fee: z.number().min(0).nullable(),
   notes: z.string().nullable(),
   starts_on: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(), // Date in YYYY-MM-DD format

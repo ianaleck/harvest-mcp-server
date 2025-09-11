@@ -3,7 +3,7 @@
  * Handles expense tracking, receipt management, and expense category operations
  */
 
-import { CallToolResult } from '@modelcontextprotocol/sdk/types';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { createLogger } from '../utils/logger';
 import { handleMCPToolError } from '../utils/errors';
@@ -31,7 +31,7 @@ class ListExpensesHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(expenses, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'list_expenses');
+      return handleMCPToolError(error, 'list_expenses');
     }
   }
 }
@@ -51,7 +51,7 @@ class GetExpenseHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(expense, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'get_expense');
+      return handleMCPToolError(error, 'get_expense');
     }
   }
 }
@@ -69,7 +69,7 @@ class CreateExpenseHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(expense, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'create_expense');
+      return handleMCPToolError(error, 'create_expense');
     }
   }
 }
@@ -87,7 +87,7 @@ class UpdateExpenseHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(expense, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'update_expense');
+      return handleMCPToolError(error, 'update_expense');
     }
   }
 }
@@ -107,7 +107,7 @@ class DeleteExpenseHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify({ message: `Expense ${expense_id} deleted successfully` }, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'delete_expense');
+      return handleMCPToolError(error, 'delete_expense');
     }
   }
 }
@@ -125,7 +125,7 @@ class ListExpenseCategoriesHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(categories, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'list_expense_categories');
+      return handleMCPToolError(error, 'list_expense_categories');
     }
   }
 }

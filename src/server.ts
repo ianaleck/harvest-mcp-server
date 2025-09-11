@@ -1,11 +1,10 @@
-import { Server } from '@modelcontextprotocol/sdk/server/index';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
-  CallToolResult,
-  Tool,
-} from '@modelcontextprotocol/sdk/types';
+} from '@modelcontextprotocol/sdk/types.js';
+import type { CallToolResult, Tool } from '@modelcontextprotocol/sdk/types.js';
 import { appConfig, HarvestConfig } from './config/index';
 import { createLogger } from './utils/logger';
 import { HarvestAPIClient } from './client/harvest-api';
@@ -102,7 +101,7 @@ export class HarvestMCPServer {
     });
 
     // Register call_tool handler
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    this.server.setRequestHandler(CallToolRequestSchema, async (request: any) => {
       const { name, arguments: args } = request.params;
       
       const handler = this.toolHandlers.get(name);

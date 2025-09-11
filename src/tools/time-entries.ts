@@ -3,7 +3,7 @@
  * Handles time tracking, timer operations, and time entry management
  */
 
-import { CallToolResult } from '@modelcontextprotocol/sdk/types';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { createLogger } from '../utils/logger';
 import { handleMCPToolError } from '../utils/errors';
@@ -33,7 +33,7 @@ class ListTimeEntriesHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(timeEntries, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'list_time_entries');
+      return handleMCPToolError(error, 'list_time_entries');
     }
   }
 }
@@ -53,7 +53,7 @@ class GetTimeEntryHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(timeEntry, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'get_time_entry');
+      return handleMCPToolError(error, 'get_time_entry');
     }
   }
 }
@@ -71,7 +71,7 @@ class CreateTimeEntryHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(timeEntry, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'create_time_entry');
+      return handleMCPToolError(error, 'create_time_entry');
     }
   }
 }
@@ -89,7 +89,7 @@ class UpdateTimeEntryHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(timeEntry, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'update_time_entry');
+      return handleMCPToolError(error, 'update_time_entry');
     }
   }
 }
@@ -109,7 +109,7 @@ class DeleteTimeEntryHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify({ message: `Time entry ${time_entry_id} deleted successfully` }, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'delete_time_entry');
+      return handleMCPToolError(error, 'delete_time_entry');
     }
   }
 }
@@ -127,7 +127,7 @@ class StartTimerHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(timeEntry, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'start_timer');
+      return handleMCPToolError(error, 'start_timer');
     }
   }
 }
@@ -145,7 +145,7 @@ class StopTimerHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(timeEntry, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'stop_timer');
+      return handleMCPToolError(error, 'stop_timer');
     }
   }
 }
@@ -163,7 +163,7 @@ class RestartTimerHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(timeEntry, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'restart_timer');
+      return handleMCPToolError(error, 'restart_timer');
     }
   }
 }

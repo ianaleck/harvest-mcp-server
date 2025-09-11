@@ -3,7 +3,7 @@
  * Handles project management, task assignments, and project configuration
  */
 
-import { CallToolResult } from '@modelcontextprotocol/sdk/types';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { createLogger } from '../utils/logger';
 import { handleMCPToolError } from '../utils/errors';
@@ -35,7 +35,7 @@ class ListProjectsHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(projects, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'list_projects');
+      return handleMCPToolError(error, 'list_projects');
     }
   }
 }
@@ -55,7 +55,7 @@ class GetProjectHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(project, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'get_project');
+      return handleMCPToolError(error, 'get_project');
     }
   }
 }
@@ -73,7 +73,7 @@ class CreateProjectHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(project, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'create_project');
+      return handleMCPToolError(error, 'create_project');
     }
   }
 }
@@ -91,7 +91,7 @@ class UpdateProjectHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(project, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'update_project');
+      return handleMCPToolError(error, 'update_project');
     }
   }
 }
@@ -111,7 +111,7 @@ class DeleteProjectHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify({ message: `Project ${project_id} deleted successfully` }, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'delete_project');
+      return handleMCPToolError(error, 'delete_project');
     }
   }
 }
@@ -129,7 +129,7 @@ class ListProjectTaskAssignmentsHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(assignments, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'list_project_task_assignments');
+      return handleMCPToolError(error, 'list_project_task_assignments');
     }
   }
 }
@@ -147,7 +147,7 @@ class CreateProjectTaskAssignmentHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(assignment, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'create_project_task_assignment');
+      return handleMCPToolError(error, 'create_project_task_assignment');
     }
   }
 }
@@ -168,7 +168,7 @@ class UpdateProjectTaskAssignmentHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(assignment, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'update_project_task_assignment');
+      return handleMCPToolError(error, 'update_project_task_assignment');
     }
   }
 }
@@ -196,7 +196,7 @@ class DeleteProjectTaskAssignmentHandler implements ToolHandler {
         }, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'delete_project_task_assignment');
+      return handleMCPToolError(error, 'delete_project_task_assignment');
     }
   }
 }

@@ -3,7 +3,7 @@
  * Handles user management, authentication, and permission operations
  */
 
-import { CallToolResult } from '@modelcontextprotocol/sdk/types';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { createLogger } from '../utils/logger';
 import { handleMCPToolError } from '../utils/errors';
@@ -30,7 +30,7 @@ class ListUsersHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(users, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'list_users');
+      return handleMCPToolError(error, 'list_users');
     }
   }
 }
@@ -50,7 +50,7 @@ class GetUserHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(user, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'get_user');
+      return handleMCPToolError(error, 'get_user');
     }
   }
 }
@@ -67,7 +67,7 @@ class GetCurrentUserHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(user, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'get_current_user');
+      return handleMCPToolError(error, 'get_current_user');
     }
   }
 }
@@ -85,7 +85,7 @@ class CreateUserHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(user, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'create_user');
+      return handleMCPToolError(error, 'create_user');
     }
   }
 }
@@ -103,7 +103,7 @@ class UpdateUserHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(user, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'update_user');
+      return handleMCPToolError(error, 'update_user');
     }
   }
 }
@@ -123,7 +123,7 @@ class DeleteUserHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify({ message: `User ${user_id} deleted successfully` }, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'delete_user');
+      return handleMCPToolError(error, 'delete_user');
     }
   }
 }

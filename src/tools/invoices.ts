@@ -3,7 +3,7 @@
  * Handles invoice management, billing operations, and payment tracking
  */
 
-import { CallToolResult } from '@modelcontextprotocol/sdk/types';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { createLogger } from '../utils/logger';
 import { handleMCPToolError } from '../utils/errors';
@@ -30,7 +30,7 @@ class ListInvoicesHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(invoices, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'list_invoices');
+      return handleMCPToolError(error, 'list_invoices');
     }
   }
 }
@@ -50,7 +50,7 @@ class GetInvoiceHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(invoice, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'get_invoice');
+      return handleMCPToolError(error, 'get_invoice');
     }
   }
 }
@@ -68,7 +68,7 @@ class CreateInvoiceHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(invoice, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'create_invoice');
+      return handleMCPToolError(error, 'create_invoice');
     }
   }
 }
@@ -86,7 +86,7 @@ class UpdateInvoiceHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(invoice, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'update_invoice');
+      return handleMCPToolError(error, 'update_invoice');
     }
   }
 }
@@ -106,7 +106,7 @@ class DeleteInvoiceHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify({ message: `Invoice ${invoice_id} deleted successfully` }, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'delete_invoice');
+      return handleMCPToolError(error, 'delete_invoice');
     }
   }
 }

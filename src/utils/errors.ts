@@ -4,6 +4,7 @@
  */
 
 import { z } from 'zod';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { createLogger } from './logger';
 
 const logger = createLogger('errors');
@@ -87,15 +88,23 @@ export function handleValidationError(error: z.ZodError, context: string): never
   );
 }
 
-export function handleMCPToolError(error: any, toolName: string): never {
+export function handleMCPToolError(error: any, toolName: string): CallToolResult {
+  let errorMessage: string;
+  
   if (error instanceof HarvestAPIError || error instanceof ValidationError) {
-    throw error;
+    errorMessage = error.message;
+  } else {
+    errorMessage = `Failed to execute ${toolName}: ${error instanceof Error ? error.message : 'Unknown error'}`;
   }
   
   logger.error(`Tool execution failed for ${toolName}:`, error);
-  throw new MCPToolError(
-    `Failed to execute ${toolName}: ${error instanceof Error ? error.message : 'Unknown error'}`,
-    toolName,
-    error instanceof Error ? error : undefined
-  );
+  
+  // Return a proper MCP error response instead of throwing
+  return {
+    content: [{
+      type: 'text',
+      text: `Error: ${errorMessage}`
+    }],
+    isError: true
+  };
 }

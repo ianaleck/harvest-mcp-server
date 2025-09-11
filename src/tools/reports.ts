@@ -3,7 +3,7 @@
  * Handles report generation for time tracking, expenses, budgets, and billing analytics
  */
 
-import { CallToolResult } from '@modelcontextprotocol/sdk/types';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { createLogger } from '../utils/logger';
 import { handleMCPToolError } from '../utils/errors';
 import { validateInput } from '../utils/validation';
@@ -30,7 +30,7 @@ class GetTimeReportHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(report, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'get_time_report');
+      return handleMCPToolError(error, 'get_time_report');
     }
   }
 }
@@ -48,7 +48,7 @@ class GetExpenseReportHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(report, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'get_expense_report');
+      return handleMCPToolError(error, 'get_expense_report');
     }
   }
 }
@@ -66,7 +66,7 @@ class GetProjectBudgetReportHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(report, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'get_project_budget_report');
+      return handleMCPToolError(error, 'get_project_budget_report');
     }
   }
 }
@@ -84,7 +84,7 @@ class GetUninvoicedReportHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(report, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'get_uninvoiced_report');
+      return handleMCPToolError(error, 'get_uninvoiced_report');
     }
   }
 }

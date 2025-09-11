@@ -3,7 +3,7 @@
  * Handles task management and task-to-project assignment operations
  */
 
-import { CallToolResult } from '@modelcontextprotocol/sdk/types';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { createLogger } from '../utils/logger';
 import { handleMCPToolError } from '../utils/errors';
@@ -30,7 +30,7 @@ class ListTasksHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(tasks, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'list_tasks');
+      return handleMCPToolError(error, 'list_tasks');
     }
   }
 }
@@ -50,7 +50,7 @@ class GetTaskHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(task, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'get_task');
+      return handleMCPToolError(error, 'get_task');
     }
   }
 }
@@ -68,7 +68,7 @@ class CreateTaskHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(task, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'create_task');
+      return handleMCPToolError(error, 'create_task');
     }
   }
 }
@@ -86,7 +86,7 @@ class UpdateTaskHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(task, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'update_task');
+      return handleMCPToolError(error, 'update_task');
     }
   }
 }
@@ -106,7 +106,7 @@ class DeleteTaskHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify({ message: `Task ${task_id} deleted successfully` }, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'delete_task');
+      return handleMCPToolError(error, 'delete_task');
     }
   }
 }

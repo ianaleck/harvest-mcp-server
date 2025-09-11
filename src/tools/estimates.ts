@@ -3,7 +3,7 @@
  * Handles estimate creation, management, and client proposal operations
  */
 
-import { CallToolResult } from '@modelcontextprotocol/sdk/types';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { createLogger } from '../utils/logger';
 import { handleMCPToolError } from '../utils/errors';
@@ -30,7 +30,7 @@ class ListEstimatesHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(estimates, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'list_estimates');
+      return handleMCPToolError(error, 'list_estimates');
     }
   }
 }
@@ -50,7 +50,7 @@ class GetEstimateHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(estimate, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'get_estimate');
+      return handleMCPToolError(error, 'get_estimate');
     }
   }
 }
@@ -68,7 +68,7 @@ class CreateEstimateHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(estimate, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'create_estimate');
+      return handleMCPToolError(error, 'create_estimate');
     }
   }
 }
@@ -86,7 +86,7 @@ class UpdateEstimateHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify(estimate, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'update_estimate');
+      return handleMCPToolError(error, 'update_estimate');
     }
   }
 }
@@ -106,7 +106,7 @@ class DeleteEstimateHandler implements ToolHandler {
         content: [{ type: 'text', text: JSON.stringify({ message: `Estimate ${estimate_id} deleted successfully` }, null, 2) }],
       };
     } catch (error) {
-      handleMCPToolError(error, 'delete_estimate');
+      return handleMCPToolError(error, 'delete_estimate');
     }
   }
 }

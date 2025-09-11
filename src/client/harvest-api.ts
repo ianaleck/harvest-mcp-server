@@ -2,18 +2,13 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { z } from 'zod';
 import { appConfig, HARVEST_API_BASE_URL } from '../config/index';
 import { createLogger } from '../utils/logger';
-import { CompanySchema } from '../schemas/company';
 import { 
-  TimeEntrySchema, 
-  TimeEntriesListSchema,
   CreateTimeEntrySchema,
   UpdateTimeEntrySchema,
   TimeEntryQuerySchema,
   StartTimerSchema,
   StopTimerSchema,
   RestartTimerSchema,
-  type TimeEntry,
-  type TimeEntriesList,
   type CreateTimeEntryInput,
   type UpdateTimeEntryInput,
   type TimeEntryQuery,
@@ -24,13 +19,9 @@ import {
 
 // Client imports
 import {
-  ClientSchema,
-  ClientsListSchema,
   CreateClientSchema,
   UpdateClientSchema,
   ClientQuerySchema,
-  type Client,
-  type ClientsList,
   type CreateClientInput,
   type UpdateClientInput,
   type ClientQuery
@@ -38,13 +29,9 @@ import {
 
 // User imports
 import {
-  UserSchema,
-  UsersListSchema,
   CreateUserSchema,
   UpdateUserSchema,
   UserQuerySchema,
-  type User,
-  type UsersList,
   type CreateUserInput,
   type UpdateUserInput,
   type UserQuery
@@ -52,13 +39,9 @@ import {
 
 // Invoice imports
 import {
-  InvoiceSchema,
-  InvoicesListSchema,
   CreateInvoiceSchema,
   UpdateInvoiceSchema,
   InvoiceQuerySchema,
-  type Invoice,
-  type InvoicesList,
   type CreateInvoiceInput,
   type UpdateInvoiceInput,
   type InvoiceQuery
@@ -66,31 +49,21 @@ import {
 
 // Expense imports
 import {
-  ExpenseSchema,
-  ExpensesListSchema,
   CreateExpenseSchema,
   UpdateExpenseSchema,
   ExpenseQuerySchema,
-  ExpenseCategoriesListSchema,
   ExpenseCategoryQuerySchema,
-  type Expense,
-  type ExpensesList,
   type CreateExpenseInput,
   type UpdateExpenseInput,
   type ExpenseQuery,
-  type ExpenseCategoriesList,
   type ExpenseCategoryQuery
 } from '../schemas/expense';
 
 // Estimate imports
 import {
-  EstimateSchema,
-  EstimatesListSchema,
   CreateEstimateSchema,
   UpdateEstimateSchema,
   EstimateQuerySchema,
-  type Estimate,
-  type EstimatesList,
   type CreateEstimateInput,
   type UpdateEstimateInput,
   type EstimateQuery,
@@ -98,18 +71,10 @@ import {
 
 // Report imports
 import {
-  TimeReportSchema,
-  ExpenseReportSchema,
-  ProjectBudgetReportsSchema,
-  UninvoicedReportsSchema,
   TimeReportQuerySchema,
   ExpenseReportQuerySchema,
   ProjectBudgetReportQuerySchema,
   UninvoicedReportQuerySchema,
-  type TimeReport,
-  type ExpenseReport,
-  type ProjectBudgetReports,
-  type UninvoicedReports,
   type TimeReportQuery,
   type ExpenseReportQuery,
   type ProjectBudgetReportQuery,
@@ -216,7 +181,7 @@ export class HarvestAPIClient {
     );
   }
 
-  async getCompany(): Promise<z.infer<typeof CompanySchema>> {
+  async getCompany(): Promise<any> {
     try {
       const response: AxiosResponse = await this.client.get('/company');
       
@@ -227,25 +192,18 @@ export class HarvestAPIClient {
         dataKeys: response.data ? Object.keys(response.data) : []
       });
       
-      // Validate response with schema
-      const company = CompanySchema.parse(response.data);
-      
       logger.info('Successfully retrieved company information', {
-        companyId: company.id,
-        companyName: company.name
+        companyId: response.data.id,
+        companyName: response.data.name
       });
       
-      return company;
+      return response.data;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        logger.error('Company response validation failed:', error.errors);
-        throw new Error(`Invalid company data received from Harvest API`);
-      }
       throw error;
     }
   }
 
-  async getTimeEntries(query?: TimeEntryQuery): Promise<TimeEntriesList> {
+  async getTimeEntries(query?: TimeEntryQuery): Promise<any> {
     try {
       // Validate query parameters
       const validatedQuery = query ? TimeEntryQuerySchema.parse(query) : {};
@@ -264,50 +222,40 @@ export class HarvestAPIClient {
       logger.debug('Fetching time entries', { query: validatedQuery });
       const response: AxiosResponse = await this.client.get(url);
       
-      // Validate response with schema
-      const timeEntries = TimeEntriesListSchema.parse(response.data);
-      
       logger.info('Successfully retrieved time entries', {
-        count: timeEntries.time_entries.length,
-        page: timeEntries.page,
-        totalPages: timeEntries.total_pages
+        count: response.data.time_entries?.length || 0,
+        page: response.data.page,
+        totalPages: response.data.total_pages
       });
       
-      return timeEntries;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        logger.error('Time entries response validation failed:', error.errors);
-        throw new Error('Invalid time entries data received from Harvest API');
+        logger.error('Time entries query validation failed:', error.errors);
+        throw new Error('Invalid time entries query parameters');
       }
       throw error;
     }
   }
 
-  async getTimeEntry(timeEntryId: number): Promise<TimeEntry> {
+  async getTimeEntry(timeEntryId: number): Promise<any> {
     try {
       logger.debug('Fetching time entry', { timeEntryId });
       const response: AxiosResponse = await this.client.get(`/time_entries/${timeEntryId}`);
       
-      // Validate response with schema
-      const timeEntry = TimeEntrySchema.parse(response.data);
-      
       logger.info('Successfully retrieved time entry', {
-        timeEntryId: timeEntry.id,
-        projectId: timeEntry.project.id,
-        hours: timeEntry.hours
+        timeEntryId: response.data.id,
+        projectId: response.data.project?.id,
+        hours: response.data.hours
       });
       
-      return timeEntry;
+      return response.data;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        logger.error('Time entry response validation failed:', error.errors);
-        throw new Error('Invalid time entry data received from Harvest API');
-      }
       throw error;
     }
   }
 
-  async createTimeEntry(input: CreateTimeEntryInput): Promise<TimeEntry> {
+  async createTimeEntry(input: CreateTimeEntryInput): Promise<any> {
     try {
       // Validate input
       const validatedInput = CreateTimeEntrySchema.parse(input);
@@ -321,16 +269,13 @@ export class HarvestAPIClient {
       
       const response: AxiosResponse = await this.client.post('/time_entries', validatedInput);
       
-      // Validate response with schema
-      const timeEntry = TimeEntrySchema.parse(response.data);
-      
       logger.info('Successfully created time entry', {
-        timeEntryId: timeEntry.id,
-        projectId: timeEntry.project.id,
-        hours: timeEntry.hours
+        timeEntryId: response.data.id,
+        projectId: response.data.project?.id,
+        hours: response.data.hours
       });
       
-      return timeEntry;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
         logger.error('Create time entry validation failed:', error.errors);
@@ -340,7 +285,7 @@ export class HarvestAPIClient {
     }
   }
 
-  async updateTimeEntry(input: UpdateTimeEntryInput): Promise<TimeEntry> {
+  async updateTimeEntry(input: UpdateTimeEntryInput): Promise<any> {
     try {
       // Validate input
       const validatedInput = UpdateTimeEntrySchema.parse(input);
@@ -353,16 +298,13 @@ export class HarvestAPIClient {
       
       const response: AxiosResponse = await this.client.patch(`/time_entries/${id}`, updateData);
       
-      // Validate response with schema
-      const timeEntry = TimeEntrySchema.parse(response.data);
-      
       logger.info('Successfully updated time entry', {
-        timeEntryId: timeEntry.id,
-        projectId: timeEntry.project.id,
-        hours: timeEntry.hours
+        timeEntryId: response.data.id,
+        projectId: response.data.project?.id,
+        hours: response.data.hours
       });
       
-      return timeEntry;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
         logger.error('Update time entry validation failed:', error.errors);
@@ -384,7 +326,7 @@ export class HarvestAPIClient {
     }
   }
 
-  async startTimer(input: StartTimerInput): Promise<TimeEntry> {
+  async startTimer(input: StartTimerInput): Promise<any> {
     try {
       // Validate input
       const validatedInput = StartTimerSchema.parse(input);
@@ -401,16 +343,13 @@ export class HarvestAPIClient {
         // Timer entries don't have hours initially
       });
       
-      // Validate response with schema
-      const timeEntry = TimeEntrySchema.parse(response.data);
-      
       logger.info('Successfully started timer', {
-        timeEntryId: timeEntry.id,
-        projectId: timeEntry.project.id,
-        isRunning: timeEntry.is_running
+        timeEntryId: response.data.id,
+        projectId: response.data.project?.id,
+        isRunning: response.data.is_running
       });
       
-      return timeEntry;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
         logger.error('Start timer validation failed:', error.errors);
@@ -420,7 +359,7 @@ export class HarvestAPIClient {
     }
   }
 
-  async stopTimer(input: StopTimerInput): Promise<TimeEntry> {
+  async stopTimer(input: StopTimerInput): Promise<any> {
     try {
       // Validate input
       const validatedInput = StopTimerSchema.parse(input);
@@ -429,16 +368,13 @@ export class HarvestAPIClient {
       
       const response: AxiosResponse = await this.client.patch(`/time_entries/${validatedInput.id}/stop`);
       
-      // Validate response with schema
-      const timeEntry = TimeEntrySchema.parse(response.data);
-      
       logger.info('Successfully stopped timer', {
-        timeEntryId: timeEntry.id,
-        hours: timeEntry.hours,
-        isRunning: timeEntry.is_running
+        timeEntryId: response.data.id,
+        hours: response.data.hours,
+        isRunning: response.data.is_running
       });
       
-      return timeEntry;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
         logger.error('Stop timer validation failed:', error.errors);
@@ -448,7 +384,7 @@ export class HarvestAPIClient {
     }
   }
 
-  async restartTimer(input: RestartTimerInput): Promise<TimeEntry> {
+  async restartTimer(input: RestartTimerInput): Promise<any> {
     try {
       // Validate input
       const validatedInput = RestartTimerSchema.parse(input);
@@ -457,16 +393,13 @@ export class HarvestAPIClient {
       
       const response: AxiosResponse = await this.client.patch(`/time_entries/${validatedInput.id}/restart`);
       
-      // Validate response with schema
-      const timeEntry = TimeEntrySchema.parse(response.data);
-      
       logger.info('Successfully restarted timer', {
-        timeEntryId: timeEntry.id,
-        projectId: timeEntry.project.id,
-        isRunning: timeEntry.is_running
+        timeEntryId: response.data.id,
+        projectId: response.data.project?.id,
+        isRunning: response.data.is_running
       });
       
-      return timeEntry;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
         logger.error('Restart timer validation failed:', error.errors);
@@ -767,7 +700,7 @@ export class HarvestAPIClient {
   }
 
   // Client Management Methods
-  async getClients(query?: ClientQuery): Promise<ClientsList> {
+  async getClients(query?: ClientQuery): Promise<any> {
     try {
       const validatedQuery = query ? ClientQuerySchema.parse(query) : {};
       const params = new URLSearchParams();
@@ -782,59 +715,52 @@ export class HarvestAPIClient {
       
       logger.debug('Fetching clients', { query: validatedQuery });
       const response: AxiosResponse = await this.client.get(url);
-      const clients = ClientsListSchema.parse(response.data);
       
       logger.info('Successfully retrieved clients', {
-        count: clients.clients.length,
-        page: clients.page,
-        totalPages: clients.total_pages
+        count: response.data.clients?.length || 0,
+        page: response.data.page,
+        totalPages: response.data.total_pages
       });
       
-      return clients;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        logger.error('Clients response validation failed:', error.errors);
-        throw new Error('Invalid clients data received from Harvest API');
+        logger.error('Clients query validation failed:', error.errors);
+        throw new Error('Invalid clients query parameters');
       }
       throw error;
     }
   }
 
-  async getClient(clientId: number): Promise<Client> {
+  async getClient(clientId: number): Promise<any> {
     try {
       logger.debug('Fetching client', { clientId });
       const response: AxiosResponse = await this.client.get(`/clients/${clientId}`);
-      const client = ClientSchema.parse(response.data);
       
       logger.info('Successfully retrieved client', {
-        clientId: client.id,
-        clientName: client.name
+        clientId: response.data.id,
+        clientName: response.data.name
       });
       
-      return client;
+      return response.data;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        logger.error('Client response validation failed:', error.errors);
-        throw new Error('Invalid client data received from Harvest API');
-      }
       throw error;
     }
   }
 
-  async createClient(input: CreateClientInput): Promise<Client> {
+  async createClient(input: CreateClientInput): Promise<any> {
     try {
       const validatedInput = CreateClientSchema.parse(input);
       
       logger.debug('Creating client', { name: validatedInput.name });
       const response: AxiosResponse = await this.client.post('/clients', validatedInput);
-      const client = ClientSchema.parse(response.data);
       
       logger.info('Successfully created client', {
-        clientId: client.id,
-        clientName: client.name
+        clientId: response.data.id,
+        clientName: response.data.name
       });
       
-      return client;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
         logger.error('Create client validation failed:', error.errors);
@@ -844,7 +770,7 @@ export class HarvestAPIClient {
     }
   }
 
-  async updateClient(input: UpdateClientInput): Promise<Client> {
+  async updateClient(input: UpdateClientInput): Promise<any> {
     try {
       const validatedInput = UpdateClientSchema.parse(input);
       const { id, ...updateData } = validatedInput;
@@ -855,14 +781,13 @@ export class HarvestAPIClient {
       });
       
       const response: AxiosResponse = await this.client.patch(`/clients/${id}`, updateData);
-      const client = ClientSchema.parse(response.data);
       
       logger.info('Successfully updated client', {
-        clientId: client.id,
-        clientName: client.name
+        clientId: response.data.id,
+        clientName: response.data.name
       });
       
-      return client;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
         logger.error('Update client validation failed:', error.errors);
@@ -883,7 +808,7 @@ export class HarvestAPIClient {
   }
 
   // User Management Methods
-  async getUsers(query?: UserQuery): Promise<UsersList> {
+  async getUsers(query?: UserQuery): Promise<any> {
     try {
       const validatedQuery = query ? UserQuerySchema.parse(query) : {};
       const params = new URLSearchParams();
@@ -898,46 +823,40 @@ export class HarvestAPIClient {
       
       logger.debug('Fetching users', { query: validatedQuery });
       const response: AxiosResponse = await this.client.get(url);
-      const users = UsersListSchema.parse(response.data);
       
       logger.info('Successfully retrieved users', {
-        count: users.users.length,
-        page: users.page,
-        totalPages: users.total_pages
+        count: response.data.users?.length || 0,
+        page: response.data.page,
+        totalPages: response.data.total_pages
       });
       
-      return users;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        logger.error('Users response validation failed:', error.errors);
-        throw new Error('Invalid users data received from Harvest API');
+        logger.error('Users query validation failed:', error.errors);
+        throw new Error('Invalid users query parameters');
       }
       throw error;
     }
   }
 
-  async getUser(userId: number): Promise<User> {
+  async getUser(userId: number): Promise<any> {
     try {
       logger.debug('Fetching user', { userId });
       const response: AxiosResponse = await this.client.get(`/users/${userId}`);
-      const user = UserSchema.parse(response.data);
       
       logger.info('Successfully retrieved user', {
-        userId: user.id,
-        userName: `${user.first_name} ${user.last_name}`
+        userId: response.data.id,
+        userName: `${response.data.first_name} ${response.data.last_name}`
       });
       
-      return user;
+      return response.data;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        logger.error('User response validation failed:', error.errors);
-        throw new Error('Invalid user data received from Harvest API');
-      }
       throw error;
     }
   }
 
-  async createUser(input: CreateUserInput): Promise<User> {
+  async createUser(input: CreateUserInput): Promise<any> {
     try {
       const validatedInput = CreateUserSchema.parse(input);
       
@@ -948,14 +867,13 @@ export class HarvestAPIClient {
       });
       
       const response: AxiosResponse = await this.client.post('/users', validatedInput);
-      const user = UserSchema.parse(response.data);
       
       logger.info('Successfully created user', {
-        userId: user.id,
-        userName: `${user.first_name} ${user.last_name}`
+        userId: response.data.id,
+        userName: `${response.data.first_name} ${response.data.last_name}`
       });
       
-      return user;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
         logger.error('Create user validation failed:', error.errors);
@@ -965,7 +883,7 @@ export class HarvestAPIClient {
     }
   }
 
-  async updateUser(input: UpdateUserInput): Promise<User> {
+  async updateUser(input: UpdateUserInput): Promise<any> {
     try {
       const validatedInput = UpdateUserSchema.parse(input);
       const { id, ...updateData } = validatedInput;
@@ -976,14 +894,13 @@ export class HarvestAPIClient {
       });
       
       const response: AxiosResponse = await this.client.patch(`/users/${id}`, updateData);
-      const user = UserSchema.parse(response.data);
       
       logger.info('Successfully updated user', {
-        userId: user.id,
-        userName: `${user.first_name} ${user.last_name}`
+        userId: response.data.id,
+        userName: `${response.data.first_name} ${response.data.last_name}`
       });
       
-      return user;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
         logger.error('Update user validation failed:', error.errors);
@@ -1003,29 +920,24 @@ export class HarvestAPIClient {
     }
   }
 
-  async getCurrentUser(): Promise<User> {
+  async getCurrentUser(): Promise<any> {
     try {
       logger.debug('Fetching current user');
       const response: AxiosResponse = await this.client.get('/users/me');
-      const user = UserSchema.parse(response.data);
       
       logger.info('Successfully retrieved current user', {
-        userId: user.id,
-        userName: `${user.first_name} ${user.last_name}`
+        userId: response.data.id,
+        userName: `${response.data.first_name} ${response.data.last_name}`
       });
       
-      return user;
+      return response.data;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        logger.error('Current user response validation failed:', error.errors);
-        throw new Error('Invalid current user data received from Harvest API');
-      }
       throw error;
     }
   }
 
   // Invoice Management Methods
-  async getInvoices(query?: InvoiceQuery): Promise<InvoicesList> {
+  async getInvoices(query?: InvoiceQuery): Promise<any> {
     try {
       const validatedQuery = query ? InvoiceQuerySchema.parse(query) : {};
       const params = new URLSearchParams();
@@ -1040,47 +952,41 @@ export class HarvestAPIClient {
       
       logger.debug('Fetching invoices', { query: validatedQuery });
       const response: AxiosResponse = await this.client.get(url);
-      const invoices = InvoicesListSchema.parse(response.data);
       
       logger.info('Successfully retrieved invoices', {
-        count: invoices.invoices.length,
-        page: invoices.page,
-        totalPages: invoices.total_pages
+        count: response.data.invoices?.length || 0,
+        page: response.data.page,
+        totalPages: response.data.total_pages
       });
       
-      return invoices;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        logger.error('Invoices response validation failed:', error.errors);
-        throw new Error('Invalid invoices data received from Harvest API');
+        logger.error('Invoices query validation failed:', error.errors);
+        throw new Error('Invalid invoices query parameters');
       }
       throw error;
     }
   }
 
-  async getInvoice(invoiceId: number): Promise<Invoice> {
+  async getInvoice(invoiceId: number): Promise<any> {
     try {
       logger.debug('Fetching invoice', { invoiceId });
       const response: AxiosResponse = await this.client.get(`/invoices/${invoiceId}`);
-      const invoice = InvoiceSchema.parse(response.data);
       
       logger.info('Successfully retrieved invoice', {
-        invoiceId: invoice.id,
-        invoiceNumber: invoice.number,
-        amount: invoice.amount
+        invoiceId: response.data.id,
+        invoiceNumber: response.data.number,
+        amount: response.data.amount
       });
       
-      return invoice;
+      return response.data;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        logger.error('Invoice response validation failed:', error.errors);
-        throw new Error('Invalid invoice data received from Harvest API');
-      }
       throw error;
     }
   }
 
-  async createInvoice(input: CreateInvoiceInput): Promise<Invoice> {
+  async createInvoice(input: CreateInvoiceInput): Promise<any> {
     try {
       const validatedInput = CreateInvoiceSchema.parse(input);
       
@@ -1090,15 +996,14 @@ export class HarvestAPIClient {
       });
       
       const response: AxiosResponse = await this.client.post('/invoices', validatedInput);
-      const invoice = InvoiceSchema.parse(response.data);
       
       logger.info('Successfully created invoice', {
-        invoiceId: invoice.id,
-        invoiceNumber: invoice.number,
-        amount: invoice.amount
+        invoiceId: response.data.id,
+        invoiceNumber: response.data.number,
+        amount: response.data.amount
       });
       
-      return invoice;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
         logger.error('Create invoice validation failed:', error.errors);
@@ -1108,7 +1013,7 @@ export class HarvestAPIClient {
     }
   }
 
-  async updateInvoice(input: UpdateInvoiceInput): Promise<Invoice> {
+  async updateInvoice(input: UpdateInvoiceInput): Promise<any> {
     try {
       const validatedInput = UpdateInvoiceSchema.parse(input);
       const { id, ...updateData } = validatedInput;
@@ -1119,14 +1024,13 @@ export class HarvestAPIClient {
       });
       
       const response: AxiosResponse = await this.client.patch(`/invoices/${id}`, updateData);
-      const invoice = InvoiceSchema.parse(response.data);
       
       logger.info('Successfully updated invoice', {
-        invoiceId: invoice.id,
-        invoiceNumber: invoice.number
+        invoiceId: response.data.id,
+        invoiceNumber: response.data.number
       });
       
-      return invoice;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
         logger.error('Update invoice validation failed:', error.errors);
@@ -1147,7 +1051,7 @@ export class HarvestAPIClient {
   }
 
   // Expense Management Methods
-  async getExpenses(query?: ExpenseQuery): Promise<ExpensesList> {
+  async getExpenses(query?: ExpenseQuery): Promise<any> {
     try {
       const validatedQuery = query ? ExpenseQuerySchema.parse(query) : {};
       const params = new URLSearchParams();
@@ -1162,47 +1066,41 @@ export class HarvestAPIClient {
       
       logger.debug('Fetching expenses', { query: validatedQuery });
       const response: AxiosResponse = await this.client.get(url);
-      const expenses = ExpensesListSchema.parse(response.data);
       
       logger.info('Successfully retrieved expenses', {
-        count: expenses.expenses.length,
-        page: expenses.page,
-        totalPages: expenses.total_pages
+        count: response.data.expenses?.length || 0,
+        page: response.data.page,
+        totalPages: response.data.total_pages
       });
       
-      return expenses;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        logger.error('Expenses response validation failed:', error.errors);
-        throw new Error('Invalid expenses data received from Harvest API');
+        logger.error('Expenses query validation failed:', error.errors);
+        throw new Error('Invalid expenses query parameters');
       }
       throw error;
     }
   }
 
-  async getExpense(expenseId: number): Promise<Expense> {
+  async getExpense(expenseId: number): Promise<any> {
     try {
       logger.debug('Fetching expense', { expenseId });
       const response: AxiosResponse = await this.client.get(`/expenses/${expenseId}`);
-      const expense = ExpenseSchema.parse(response.data);
       
       logger.info('Successfully retrieved expense', {
-        expenseId: expense.id,
-        totalCost: expense.total_cost,
-        spentDate: expense.spent_date
+        expenseId: response.data.id,
+        totalCost: response.data.total_cost,
+        spentDate: response.data.spent_date
       });
       
-      return expense;
+      return response.data;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        logger.error('Expense response validation failed:', error.errors);
-        throw new Error('Invalid expense data received from Harvest API');
-      }
       throw error;
     }
   }
 
-  async createExpense(input: CreateExpenseInput): Promise<Expense> {
+  async createExpense(input: CreateExpenseInput): Promise<any> {
     try {
       const validatedInput = CreateExpenseSchema.parse(input);
       
@@ -1213,14 +1111,13 @@ export class HarvestAPIClient {
       });
       
       const response: AxiosResponse = await this.client.post('/expenses', validatedInput);
-      const expense = ExpenseSchema.parse(response.data);
       
       logger.info('Successfully created expense', {
-        expenseId: expense.id,
-        totalCost: expense.total_cost
+        expenseId: response.data.id,
+        totalCost: response.data.total_cost
       });
       
-      return expense;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
         logger.error('Create expense validation failed:', error.errors);
@@ -1230,7 +1127,7 @@ export class HarvestAPIClient {
     }
   }
 
-  async updateExpense(input: UpdateExpenseInput): Promise<Expense> {
+  async updateExpense(input: UpdateExpenseInput): Promise<any> {
     try {
       const validatedInput = UpdateExpenseSchema.parse(input);
       const { id, ...updateData } = validatedInput;
@@ -1241,14 +1138,13 @@ export class HarvestAPIClient {
       });
       
       const response: AxiosResponse = await this.client.patch(`/expenses/${id}`, updateData);
-      const expense = ExpenseSchema.parse(response.data);
       
       logger.info('Successfully updated expense', {
-        expenseId: expense.id,
-        totalCost: expense.total_cost
+        expenseId: response.data.id,
+        totalCost: response.data.total_cost
       });
       
-      return expense;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
         logger.error('Update expense validation failed:', error.errors);
@@ -1268,7 +1164,7 @@ export class HarvestAPIClient {
     }
   }
 
-  async getExpenseCategories(query?: ExpenseCategoryQuery): Promise<ExpenseCategoriesList> {
+  async getExpenseCategories(query?: ExpenseCategoryQuery): Promise<any> {
     try {
       const validatedQuery = query ? ExpenseCategoryQuerySchema.parse(query) : {};
       const params = new URLSearchParams();
@@ -1283,24 +1179,23 @@ export class HarvestAPIClient {
       
       logger.debug('Fetching expense categories', { query: validatedQuery });
       const response: AxiosResponse = await this.client.get(url);
-      const categories = ExpenseCategoriesListSchema.parse(response.data);
       
       logger.info('Successfully retrieved expense categories', {
-        count: categories.expense_categories.length
+        count: response.data.expense_categories?.length || 0
       });
       
-      return categories;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        logger.error('Expense categories response validation failed:', error.errors);
-        throw new Error('Invalid expense categories data received from Harvest API');
+        logger.error('Expense categories query validation failed:', error.errors);
+        throw new Error('Invalid expense categories query parameters');
       }
       throw error;
     }
   }
 
   // Estimate Management Methods  
-  async getEstimates(query?: EstimateQuery): Promise<EstimatesList> {
+  async getEstimates(query?: EstimateQuery): Promise<any> {
     try {
       const validatedQuery = query ? EstimateQuerySchema.parse(query) : {};
       const params = new URLSearchParams();
@@ -1315,47 +1210,41 @@ export class HarvestAPIClient {
       
       logger.debug('Fetching estimates', { query: validatedQuery });
       const response: AxiosResponse = await this.client.get(url);
-      const estimates = EstimatesListSchema.parse(response.data);
       
       logger.info('Successfully retrieved estimates', {
-        count: estimates.estimates.length,
-        page: estimates.page,
-        totalPages: estimates.total_pages
+        count: response.data.estimates?.length || 0,
+        page: response.data.page,
+        totalPages: response.data.total_pages
       });
       
-      return estimates;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        logger.error('Estimates response validation failed:', error.errors);
-        throw new Error('Invalid estimates data received from Harvest API');
+        logger.error('Estimates query validation failed:', error.errors);
+        throw new Error('Invalid estimates query parameters');
       }
       throw error;
     }
   }
 
-  async getEstimate(estimateId: number): Promise<Estimate> {
+  async getEstimate(estimateId: number): Promise<any> {
     try {
       logger.debug('Fetching estimate', { estimateId });
       const response: AxiosResponse = await this.client.get(`/estimates/${estimateId}`);
-      const estimate = EstimateSchema.parse(response.data);
       
       logger.info('Successfully retrieved estimate', {
-        estimateId: estimate.id,
-        estimateNumber: estimate.number,
-        amount: estimate.amount
+        estimateId: response.data.id,
+        estimateNumber: response.data.number,
+        amount: response.data.amount
       });
       
-      return estimate;
+      return response.data;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        logger.error('Estimate response validation failed:', error.errors);
-        throw new Error('Invalid estimate data received from Harvest API');
-      }
       throw error;
     }
   }
 
-  async createEstimate(input: CreateEstimateInput): Promise<Estimate> {
+  async createEstimate(input: CreateEstimateInput): Promise<any> {
     try {
       const validatedInput = CreateEstimateSchema.parse(input);
       
@@ -1365,14 +1254,13 @@ export class HarvestAPIClient {
       });
       
       const response: AxiosResponse = await this.client.post('/estimates', validatedInput);
-      const estimate = EstimateSchema.parse(response.data);
       
       logger.info('Successfully created estimate', {
-        estimateId: estimate.id,
-        estimateNumber: estimate.number
+        estimateId: response.data.id,
+        estimateNumber: response.data.number
       });
       
-      return estimate;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
         logger.error('Create estimate validation failed:', error.errors);
@@ -1382,7 +1270,7 @@ export class HarvestAPIClient {
     }
   }
 
-  async updateEstimate(input: UpdateEstimateInput): Promise<Estimate> {
+  async updateEstimate(input: UpdateEstimateInput): Promise<any> {
     try {
       const validatedInput = UpdateEstimateSchema.parse(input);
       const { id, ...updateData } = validatedInput;
@@ -1393,14 +1281,13 @@ export class HarvestAPIClient {
       });
       
       const response: AxiosResponse = await this.client.patch(`/estimates/${id}`, updateData);
-      const estimate = EstimateSchema.parse(response.data);
       
       logger.info('Successfully updated estimate', {
-        estimateId: estimate.id,
-        estimateNumber: estimate.number
+        estimateId: response.data.id,
+        estimateNumber: response.data.number
       });
       
-      return estimate;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
         logger.error('Update estimate validation failed:', error.errors);
@@ -1421,11 +1308,19 @@ export class HarvestAPIClient {
   }
 
   // Report Methods
-  async getTimeReport(query: TimeReportQuery): Promise<TimeReport> {
+  async getTimeReport(query: TimeReportQuery): Promise<any> {
     try {
       const validatedQuery = TimeReportQuerySchema.parse(query);
+      
+      // Provide default date range if not specified (last 30 days)
+      const finalQuery = {
+        ...validatedQuery,
+        from: validatedQuery.from || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        to: validatedQuery.to || new Date().toISOString().split('T')[0]
+      };
+      
       const params = new URLSearchParams();
-      Object.entries(validatedQuery).forEach(([key, value]) => {
+      Object.entries(finalQuery).forEach(([key, value]) => {
         if (value !== undefined) {
           params.append(key, String(value));
         }
@@ -1436,28 +1331,35 @@ export class HarvestAPIClient {
       
       logger.debug('Fetching time report', { query: validatedQuery });
       const response: AxiosResponse = await this.client.get(url);
-      const report = TimeReportSchema.parse(response.data);
       
       logger.info('Successfully retrieved time report', {
-        totalHours: report.total_hours,
-        totalAmount: report.total_amount
+        totalHours: response.data.total_hours,
+        totalAmount: response.data.total_amount
       });
       
-      return report;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        logger.error('Time report response validation failed:', error.errors);
-        throw new Error('Invalid time report data received from Harvest API');
+        logger.error('Time report query validation failed:', error.errors);
+        throw new Error('Invalid time report query parameters');
       }
       throw error;
     }
   }
 
-  async getExpenseReport(query: ExpenseReportQuery): Promise<ExpenseReport> {
+  async getExpenseReport(query: ExpenseReportQuery): Promise<any> {
     try {
       const validatedQuery = ExpenseReportQuerySchema.parse(query);
+      
+      // Provide default date range if not specified (last 30 days)
+      const finalQuery = {
+        ...validatedQuery,
+        from: validatedQuery.from || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        to: validatedQuery.to || new Date().toISOString().split('T')[0]
+      };
+      
       const params = new URLSearchParams();
-      Object.entries(validatedQuery).forEach(([key, value]) => {
+      Object.entries(finalQuery).forEach(([key, value]) => {
         if (value !== undefined) {
           params.append(key, String(value));
         }
@@ -1468,24 +1370,23 @@ export class HarvestAPIClient {
       
       logger.debug('Fetching expense report', { query: validatedQuery });
       const response: AxiosResponse = await this.client.get(url);
-      const report = ExpenseReportSchema.parse(response.data);
       
       logger.info('Successfully retrieved expense report', {
-        totalAmount: report.total_amount,
-        totalBillableAmount: report.total_billable_amount
+        totalAmount: response.data.total_amount,
+        totalBillableAmount: response.data.total_billable_amount
       });
       
-      return report;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        logger.error('Expense report response validation failed:', error.errors);
-        throw new Error('Invalid expense report data received from Harvest API');
+        logger.error('Expense report query validation failed:', error.errors);
+        throw new Error('Invalid expense report query parameters');
       }
       throw error;
     }
   }
 
-  async getProjectBudgetReport(query?: ProjectBudgetReportQuery): Promise<ProjectBudgetReports> {
+  async getProjectBudgetReport(query?: ProjectBudgetReportQuery): Promise<any> {
     try {
       const validatedQuery = query ? ProjectBudgetReportQuerySchema.parse(query) : {};
       const params = new URLSearchParams();
@@ -1500,27 +1401,34 @@ export class HarvestAPIClient {
       
       logger.debug('Fetching project budget report', { query: validatedQuery });
       const response: AxiosResponse = await this.client.get(url);
-      const report = ProjectBudgetReportsSchema.parse(response.data);
       
       logger.info('Successfully retrieved project budget report', {
-        projectCount: report.results.length
+        projectCount: response.data.results?.length || 0
       });
       
-      return report;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        logger.error('Project budget report response validation failed:', error.errors);
-        throw new Error('Invalid project budget report data received from Harvest API');
+        logger.error('Project budget report query validation failed:', error.errors);
+        throw new Error('Invalid project budget report query parameters');
       }
       throw error;
     }
   }
 
-  async getUninvoicedReport(query: UninvoicedReportQuery): Promise<UninvoicedReports> {
+  async getUninvoicedReport(query: UninvoicedReportQuery): Promise<any> {
     try {
       const validatedQuery = UninvoicedReportQuerySchema.parse(query);
+      
+      // Provide default date range if not specified (last 30 days)
+      const finalQuery = {
+        ...validatedQuery,
+        from: validatedQuery.from || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        to: validatedQuery.to || new Date().toISOString().split('T')[0]
+      };
+      
       const params = new URLSearchParams();
-      Object.entries(validatedQuery).forEach(([key, value]) => {
+      Object.entries(finalQuery).forEach(([key, value]) => {
         if (value !== undefined) {
           params.append(key, String(value));
         }
@@ -1531,18 +1439,17 @@ export class HarvestAPIClient {
       
       logger.debug('Fetching uninvoiced report', { query: validatedQuery });
       const response: AxiosResponse = await this.client.get(url);
-      const report = UninvoicedReportsSchema.parse(response.data);
       
       logger.info('Successfully retrieved uninvoiced report', {
-        totalHours: report.total_hours,
-        totalAmount: report.total_amount
+        totalHours: response.data.total_hours,
+        totalAmount: response.data.total_amount
       });
       
-      return report;
+      return response.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        logger.error('Uninvoiced report response validation failed:', error.errors);
-        throw new Error('Invalid uninvoiced report data received from Harvest API');
+        logger.error('Uninvoiced report query validation failed:', error.errors);
+        throw new Error('Invalid uninvoiced report query parameters');
       }
       throw error;
     }

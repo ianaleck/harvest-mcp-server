@@ -1,13 +1,13 @@
 {
   "name": "@ianaleck/harvest-mcp-server",
-  "version": "0.1.0-beta.1",
+  "version": "0.1.0-beta.2",
   "description": "Model Context Protocol server for Harvest API v2",
   "main": "dist/index.js",
   "bin": {
     "harvest-mcp-server": "dist/index.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --skipLibCheck && chmod +x dist/index.js",
     "dev": "ts-node src/index.ts",
     "start": "node dist/index.js",
     "test": "jest",
@@ -52,6 +52,7 @@
     "@types/node": "^24.3.1",
     "@typescript-eslint/eslint-plugin": "^8.43.0",
     "@typescript-eslint/parser": "^8.43.0",
+    "esbuild": "^0.25.9",
     "eslint": "^9.35.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",

@@ -1,8 +1,6 @@
-import { config as loadEnv } from 'dotenv';
 import { z } from 'zod';
 
-// Load environment variables
-loadEnv();
+// Note: Environment variables are passed directly via MCP config, no need for dotenv
 
 // Constants
 const HARVEST_API_BASE_URL = 'https://api.harvestapp.com/v2';

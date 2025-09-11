@@ -3,7 +3,7 @@
  * Handles company information retrieval and management
  */
 
-import { CallToolResult } from '@modelcontextprotocol/sdk/types';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { createLogger } from '../utils/logger';
 import { handleMCPToolError } from '../utils/errors';
 import { BaseToolConfig, ToolHandler, ToolRegistration } from '../types';
@@ -27,7 +27,7 @@ class CompanyToolHandler implements ToolHandler {
         ],
       };
     } catch (error) {
-      handleMCPToolError(error, 'get_company');
+      return handleMCPToolError(error, 'get_company');
     }
   }
 }

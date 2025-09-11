@@ -3,7 +3,7 @@
  * Centralized type exports and common interfaces
  */
 
-import { CallToolResult, Tool } from '@modelcontextprotocol/sdk/types';
+import type { CallToolResult, Tool } from '@modelcontextprotocol/sdk/types.js';
 
 // Re-export all schema types
 export * from '../schemas/company';

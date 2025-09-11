@@ -29,7 +29,7 @@ export const TimeEntryTaskSchema = z.object({
 export const TimeEntryClientSchema = z.object({
   id: z.number().int().positive(),
   name: z.string().min(1),
-  currency: z.string().length(3), // ISO currency code
+  currency: z.string().length(3).optional(), // ISO currency code
 });
 
 // Time entry invoice reference (optional)
@@ -54,16 +54,16 @@ export const TimeEntrySchema = z.object({
   hours_without_timer: z.number().min(0).max(24).optional(),
   rounded_hours: z.number().min(0).max(24).optional(),
   notes: z.string().nullable(),
-  is_locked: z.boolean(),
+  is_locked: z.boolean().optional(),
   locked_reason: z.string().nullable(),
-  is_closed: z.boolean(),
-  is_billed: z.boolean(),
+  is_closed: z.boolean().optional(),
+  is_billed: z.boolean().optional(),
   timer_started_at: z.string().datetime({ offset: true }).nullable(),
   started_time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).nullable(), // HH:MM format
   ended_time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).nullable(), // HH:MM format
-  is_running: z.boolean(),
-  billable: z.boolean(),
-  budgeted: z.boolean(),
+  is_running: z.boolean().optional(),
+  billable: z.boolean().optional(),
+  budgeted: z.boolean().optional(),
   billable_rate: z.number().min(0).nullable(),
   cost_rate: z.number().min(0).nullable(),
   created_at: z.string().datetime({ offset: true }),
