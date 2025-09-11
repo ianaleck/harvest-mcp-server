@@ -4,6 +4,18 @@
 
 import '../matchers/harvest-matchers';
 import { HarvestMockServer } from '../mocks/harvest-mock-server';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+
+// Helper function to check if a tool result is an error
+function expectToolError(result: CallToolResult, expectedMessage?: string): void {
+  expect(result).toHaveProperty('isError', true);
+  expect(result).toHaveProperty('content');
+  expect(Array.isArray(result.content)).toBe(true);
+  expect(result.content[0]).toHaveProperty('type', 'text');
+  if (expectedMessage) {
+    expect(result.content[0].text).toContain(expectedMessage);
+  }
+}
 
 describe('Project Tools', () => {
   let mockServer: HarvestMockServer;
@@ -174,9 +186,10 @@ describe('Project Tools', () => {
       const projectTools = harvestServer.getToolsByCategory('projects');
       const listProjectsTool = projectTools.find((tool: any) => tool.name === 'list_projects');
 
-      await expect(listProjectsTool.execute({
+      const result = await listProjectsTool.execute({
         is_active: 'invalid', // Should be boolean
-      })).rejects.toThrow('Invalid parameters');
+      });
+      expectToolError(result, 'Invalid parameters');
     });
   });
 
@@ -197,8 +210,8 @@ describe('Project Tools', () => {
       const projectTools = harvestServer.getToolsByCategory('projects');
       const getProjectTool = projectTools.find((tool: any) => tool.name === 'get_project');
 
-      await expect(getProjectTool.execute({}))
-        .rejects.toThrow('Invalid parameters');
+      const result = await getProjectTool.execute({});
+      expectToolError(result, 'Invalid parameters');
     });
   });
 
@@ -223,8 +236,8 @@ describe('Project Tools', () => {
       const projectTools = harvestServer.getToolsByCategory('projects');
       const createProjectTool = projectTools.find((tool: any) => tool.name === 'create_project');
 
-      await expect(createProjectTool.execute({}))
-        .rejects.toThrow('Invalid parameters');
+      const result = await createProjectTool.execute({});
+      expectToolError(result, 'Invalid parameters');
     });
   });
 

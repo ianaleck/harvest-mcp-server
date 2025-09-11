@@ -4,6 +4,18 @@
 
 import '../matchers/harvest-matchers';
 import { HarvestMockServer } from '../mocks/harvest-mock-server';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+
+// Helper function to check if a tool result is an error
+function expectToolError(result: CallToolResult, expectedMessage?: string): void {
+  expect(result).toHaveProperty('isError', true);
+  expect(result).toHaveProperty('content');
+  expect(Array.isArray(result.content)).toBe(true);
+  expect(result.content[0]).toHaveProperty('type', 'text');
+  if (expectedMessage) {
+    expect(result.content[0].text).toContain(expectedMessage);
+  }
+}
 
 describe('Time Entry Tools', () => {
   let mockServer: HarvestMockServer;
@@ -215,13 +227,15 @@ describe('Time Entry Tools', () => {
       const timeEntryTools = harvestServer.getToolsByCategory('time_entries');
       const listTimeEntriesInTool = timeEntryTools.find((tool: any) => tool.name === 'list_time_entries');
 
-      await expect(listTimeEntriesInTool.execute({
+      const result1 = await listTimeEntriesInTool.execute({
         user_id: 'invalid', // Should be number
-      })).rejects.toThrow('Invalid parameters');
+      });
+      expectToolError(result1, 'Invalid parameters');
 
-      await expect(listTimeEntriesInTool.execute({
+      const result2 = await listTimeEntriesInTool.execute({
         from: 'invalid-date', // Should be YYYY-MM-DD
-      })).rejects.toThrow('Invalid parameters');
+      });
+      expectToolError(result2, 'Invalid parameters');
     });
 
     it('should be properly registered in MCP server', async () => {
@@ -267,19 +281,19 @@ describe('Time Entry Tools', () => {
       const timeEntryTools = harvestServer.getToolsByCategory('time_entries');
       const getTimeEntryTool = timeEntryTools.find((tool: any) => tool.name === 'get_time_entry');
 
-      await expect(getTimeEntryTool.execute({ time_entry_id: 999999999 }))
-        .rejects.toThrow('HTTP 404');
+      const result = await getTimeEntryTool.execute({ time_entry_id: 999999999 });
+      expectToolError(result, 'HTTP 404');
     });
 
     it('should validate required time_entry_id parameter', async () => {
       const timeEntryTools = harvestServer.getToolsByCategory('time_entries');
       const getTimeEntryTool = timeEntryTools.find((tool: any) => tool.name === 'get_time_entry');
 
-      await expect(getTimeEntryTool.execute({}))
-        .rejects.toThrow('Invalid parameters');
+      const result = await getTimeEntryTool.execute({});
+      expectToolError(result, 'Invalid parameters');
 
-      await expect(getTimeEntryTool.execute({ time_entry_id: 'invalid' }))
-        .rejects.toThrow('Invalid parameters');
+      const result2 = await getTimeEntryTool.execute({ time_entry_id: 'invalid' });
+      expectToolError(result2, 'Invalid parameters');
     });
   });
 
@@ -327,26 +341,28 @@ describe('Time Entry Tools', () => {
       const timeEntryTools = harvestServer.getToolsByCategory('time_entries');
       const createTimeEntryTool = timeEntryTools.find((tool: any) => tool.name === 'create_time_entry');
 
-      await expect(createTimeEntryTool.execute({}))
-        .rejects.toThrow('Invalid parameters');
+      const result = await createTimeEntryTool.execute({});
+      expectToolError(result, 'Invalid parameters');
 
-      await expect(createTimeEntryTool.execute({
+      const result2 = await createTimeEntryTool.execute({
         project_id: 14307913,
         task_id: 8083365
         // Missing spent_date
-      })).rejects.toThrow('Invalid parameters');
+      });
+      expectToolError(result2, 'Invalid parameters');
     });
 
     it('should validate hours or time range requirement', async () => {
       const timeEntryTools = harvestServer.getToolsByCategory('time_entries');
       const createTimeEntryTool = timeEntryTools.find((tool: any) => tool.name === 'create_time_entry');
 
-      await expect(createTimeEntryTool.execute({
+      const result = await createTimeEntryTool.execute({
         project_id: 14307913,
         task_id: 8083365,
         spent_date: '2025-09-10'
         // Missing hours AND time range
-      })).rejects.toThrow('Invalid parameters');
+      });
+      expectToolError(result, 'Invalid parameters');
     });
   });
 
@@ -373,10 +389,11 @@ describe('Time Entry Tools', () => {
       const timeEntryTools = harvestServer.getToolsByCategory('time_entries');
       const updateTimeEntryTool = timeEntryTools.find((tool: any) => tool.name === 'update_time_entry');
 
-      await expect(updateTimeEntryTool.execute({
+      const result = await updateTimeEntryTool.execute({
         hours: 5.0
         // Missing id
-      })).rejects.toThrow('Invalid parameters');
+      });
+      expectToolError(result, 'Invalid parameters');
     });
   });
 
@@ -397,8 +414,8 @@ describe('Time Entry Tools', () => {
       const timeEntryTools = harvestServer.getToolsByCategory('time_entries');
       const deleteTimeEntryTool = timeEntryTools.find((tool: any) => tool.name === 'delete_time_entry');
 
-      await expect(deleteTimeEntryTool.execute({ time_entry_id: 999999999 }))
-        .rejects.toThrow('HTTP 404');
+      const result = await deleteTimeEntryTool.execute({ time_entry_id: 999999999 });
+      expectToolError(result, 'HTTP 404');
     });
   });
 
@@ -457,16 +474,16 @@ describe('Time Entry Tools', () => {
       const restartTimerTool = timeEntryTools.find((tool: any) => tool.name === 'restart_timer');
 
       // Start timer validation
-      await expect(startTimerTool.execute({}))
-        .rejects.toThrow('Invalid parameters');
+      const result1 = await startTimerTool.execute({});
+      expectToolError(result1, 'Invalid parameters');
 
       // Stop timer validation  
-      await expect(stopTimerTool.execute({}))
-        .rejects.toThrow('Invalid parameters');
+      const result2 = await stopTimerTool.execute({});
+      expectToolError(result2, 'Invalid parameters');
 
       // Restart timer validation
-      await expect(restartTimerTool.execute({}))
-        .rejects.toThrow('Invalid parameters');
+      const result3 = await restartTimerTool.execute({});
+      expectToolError(result3, 'Invalid parameters');
     });
   });
 

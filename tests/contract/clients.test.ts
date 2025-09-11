@@ -4,6 +4,18 @@
 
 import '../matchers/harvest-matchers';
 import { HarvestMockServer } from '../mocks/harvest-mock-server';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+
+// Helper function to check if a tool result is an error
+function expectToolError(result: CallToolResult, expectedMessage?: string): void {
+  expect(result).toHaveProperty('isError', true);
+  expect(result).toHaveProperty('content');
+  expect(Array.isArray(result.content)).toBe(true);
+  expect(result.content[0]).toHaveProperty('type', 'text');
+  if (expectedMessage) {
+    expect(result.content[0].text).toContain(expectedMessage);
+  }
+}
 
 describe('Client Tools', () => {
   let mockServer: HarvestMockServer;
@@ -201,9 +213,10 @@ describe('Client Tools', () => {
       const clientTools = harvestServer.getToolsByCategory('clients');
       const listClientsTool = clientTools.find((tool: any) => tool.name === 'list_clients');
 
-      await expect(listClientsTool.execute({
+      const result = await listClientsTool.execute({
         per_page: 'invalid', // Should be number
-      })).rejects.toThrow('Invalid parameters');
+      });
+      expectToolError(result, 'Invalid parameters');
     });
   });
 
@@ -231,19 +244,19 @@ describe('Client Tools', () => {
       const clientTools = harvestServer.getToolsByCategory('clients');
       const getClientTool = clientTools.find((tool: any) => tool.name === 'get_client');
 
-      await expect(getClientTool.execute({ client_id: 999999999 }))
-        .rejects.toThrow('HTTP 404');
+      const result = await getClientTool.execute({ client_id: 999999999 });
+      expectToolError(result, 'HTTP 404');
     });
 
     it('should validate required client_id parameter', async () => {
       const clientTools = harvestServer.getToolsByCategory('clients');
       const getClientTool = clientTools.find((tool: any) => tool.name === 'get_client');
 
-      await expect(getClientTool.execute({}))
-        .rejects.toThrow('Invalid parameters');
+      const result1 = await getClientTool.execute({});
+      expectToolError(result1, 'Invalid parameters');
 
-      await expect(getClientTool.execute({ client_id: 'invalid' }))
-        .rejects.toThrow('Invalid parameters');
+      const result2 = await getClientTool.execute({ client_id: 'invalid' });
+      expectToolError(result2, 'Invalid parameters');
     });
   });
 
@@ -270,13 +283,14 @@ describe('Client Tools', () => {
       const clientTools = harvestServer.getToolsByCategory('clients');
       const createClientTool = clientTools.find((tool: any) => tool.name === 'create_client');
 
-      await expect(createClientTool.execute({}))
-        .rejects.toThrow('Invalid parameters');
+      const result1 = await createClientTool.execute({});
+      expectToolError(result1, 'Invalid parameters');
 
-      await expect(createClientTool.execute({
+      const result2 = await createClientTool.execute({
         // Missing name
         currency: 'USD'
-      })).rejects.toThrow('Invalid parameters');
+      });
+      expectToolError(result2, 'Invalid parameters');
     });
   });
 
@@ -301,10 +315,11 @@ describe('Client Tools', () => {
       const clientTools = harvestServer.getToolsByCategory('clients');
       const updateClientTool = clientTools.find((tool: any) => tool.name === 'update_client');
 
-      await expect(updateClientTool.execute({
+      const result = await updateClientTool.execute({
         name: 'Test'
         // Missing id
-      })).rejects.toThrow('Invalid parameters');
+      });
+      expectToolError(result, 'Invalid parameters');
     });
   });
 
@@ -323,8 +338,8 @@ describe('Client Tools', () => {
       const clientTools = harvestServer.getToolsByCategory('clients');
       const deleteClientTool = clientTools.find((tool: any) => tool.name === 'delete_client');
 
-      await expect(deleteClientTool.execute({ client_id: 999999999 }))
-        .rejects.toThrow('HTTP 404');
+      const result = await deleteClientTool.execute({ client_id: 999999999 });
+      expectToolError(result, 'HTTP 404');
     });
   });
 

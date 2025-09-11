@@ -4,6 +4,18 @@
 
 import '../matchers/harvest-matchers';
 import { HarvestMockServer } from '../mocks/harvest-mock-server';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+
+// Helper function to check if a tool result is an error
+function expectToolError(result: CallToolResult, expectedMessage?: string): void {
+  expect(result).toHaveProperty('isError', true);
+  expect(result).toHaveProperty('content');
+  expect(Array.isArray(result.content)).toBe(true);
+  expect(result.content[0]).toHaveProperty('type', 'text');
+  if (expectedMessage) {
+    expect(result.content[0].text).toContain(expectedMessage);
+  }
+}
 
 describe('Task Tools', () => {
   let mockServer: HarvestMockServer;
@@ -195,9 +207,10 @@ describe('Task Tools', () => {
       const taskTools = harvestServer.getToolsByCategory('tasks');
       const listTasksTool = taskTools.find((tool: any) => tool.name === 'list_tasks');
 
-      await expect(listTasksTool.execute({
+      const result = await listTasksTool.execute({
         is_active: 'invalid', // Should be boolean
-      })).rejects.toThrow('Invalid parameters');
+      });
+      expectToolError(result, 'Invalid parameters');
     });
   });
 
@@ -226,19 +239,19 @@ describe('Task Tools', () => {
       const taskTools = harvestServer.getToolsByCategory('tasks');
       const getTaskTool = taskTools.find((tool: any) => tool.name === 'get_task');
 
-      await expect(getTaskTool.execute({ task_id: 999999999 }))
-        .rejects.toThrow('HTTP 404');
+      const result = await getTaskTool.execute({ task_id: 999999999 });
+      expectToolError(result, 'HTTP 404');
     });
 
     it('should validate required task_id parameter', async () => {
       const taskTools = harvestServer.getToolsByCategory('tasks');
       const getTaskTool = taskTools.find((tool: any) => tool.name === 'get_task');
 
-      await expect(getTaskTool.execute({}))
-        .rejects.toThrow('Invalid parameters');
+      const result1 = await getTaskTool.execute({});
+      expectToolError(result1, 'Invalid parameters');
 
-      await expect(getTaskTool.execute({ task_id: 'invalid' }))
-        .rejects.toThrow('Invalid parameters');
+      const result2 = await getTaskTool.execute({ task_id: 'invalid' });
+      expectToolError(result2, 'Invalid parameters');
     });
   });
 
@@ -266,13 +279,14 @@ describe('Task Tools', () => {
       const taskTools = harvestServer.getToolsByCategory('tasks');
       const createTaskTool = taskTools.find((tool: any) => tool.name === 'create_task');
 
-      await expect(createTaskTool.execute({}))
-        .rejects.toThrow('Invalid parameters');
+      const result1 = await createTaskTool.execute({});
+      expectToolError(result1, 'Invalid parameters');
 
-      await expect(createTaskTool.execute({
+      const result2 = await createTaskTool.execute({
         // Missing name
         is_active: true
-      })).rejects.toThrow('Invalid parameters');
+      });
+      expectToolError(result2, 'Invalid parameters');
     });
   });
 
@@ -299,10 +313,11 @@ describe('Task Tools', () => {
       const taskTools = harvestServer.getToolsByCategory('tasks');
       const updateTaskTool = taskTools.find((tool: any) => tool.name === 'update_task');
 
-      await expect(updateTaskTool.execute({
+      const result = await updateTaskTool.execute({
         name: 'Test'
         // Missing id
-      })).rejects.toThrow('Invalid parameters');
+      });
+      expectToolError(result, 'Invalid parameters');
     });
   });
 
@@ -321,8 +336,8 @@ describe('Task Tools', () => {
       const taskTools = harvestServer.getToolsByCategory('tasks');
       const deleteTaskTool = taskTools.find((tool: any) => tool.name === 'delete_task');
 
-      await expect(deleteTaskTool.execute({ task_id: 999999999 }))
-        .rejects.toThrow('HTTP 404');
+      const result = await deleteTaskTool.execute({ task_id: 999999999 });
+      expectToolError(result, 'HTTP 404');
     });
   });
 

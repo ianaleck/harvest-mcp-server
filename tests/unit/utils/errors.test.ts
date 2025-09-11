@@ -184,16 +184,18 @@ describe('Error Handlers', () => {
   });
 
   describe('handleMCPToolError', () => {
-    it('should throw MCPToolError and never return', () => {
+    it('should return error response and never throw', () => {
       const originalError = new Error('Test error');
 
-      expect(() => {
-        handleMCPToolError(originalError, 'test_tool');
-      }).toThrow(MCPToolError);
-
-      expect(() => {
-        handleMCPToolError(originalError, 'test_tool');
-      }).toThrow('Failed to execute test_tool: Test error');
+      const result = handleMCPToolError(originalError, 'test_tool');
+      
+      expect(result).toEqual({
+        content: [{
+          type: 'text',
+          text: 'Error: Failed to execute test_tool: Test error'
+        }],
+        isError: true
+      });
     });
 
     it('should handle ValidationError correctly', () => {
@@ -206,37 +208,52 @@ describe('Error Handlers', () => {
       }]);
       const validationError = new ValidationError('Validation failed', zodError);
 
-      expect(() => {
-        handleMCPToolError(validationError, 'test_tool');
-      }).toThrow(ValidationError);
-
-      expect(() => {
-        handleMCPToolError(validationError, 'test_tool');
-      }).toThrow('Validation failed');
+      const result = handleMCPToolError(validationError, 'test_tool');
+      
+      expect(result).toEqual({
+        content: [{
+          type: 'text',
+          text: 'Error: Validation failed'
+        }],
+        isError: true
+      });
     });
 
     it('should handle HarvestAPIError correctly', () => {
       const apiError = new HarvestAPIError('API Error', 500);
 
-      expect(() => {
-        handleMCPToolError(apiError, 'test_tool');
-      }).toThrow(HarvestAPIError);
-
-      expect(() => {
-        handleMCPToolError(apiError, 'test_tool');
-      }).toThrow('API Error');
+      const result = handleMCPToolError(apiError, 'test_tool');
+      
+      expect(result).toEqual({
+        content: [{
+          type: 'text',
+          text: 'Error: API Error'
+        }],
+        isError: true
+      });
     });
 
     it('should handle unknown error types', () => {
       const unknownError = 'String error';
 
-      expect(() => {
-        handleMCPToolError(unknownError, 'test_tool');
-      }).toThrow(MCPToolError);
+      const result1 = handleMCPToolError(unknownError, 'test_tool');
+      expect(result1).toEqual({
+        content: [{
+          type: 'text',
+          text: 'Error: Failed to execute test_tool: Unknown error'
+        }],
+        isError: true
+      });
 
-      expect(() => {
-        handleMCPToolError(unknownError, 'test_tool');
-      }).toThrow('Failed to execute test_tool: Unknown error');
+      const originalError = new Error('Test error');
+      const result2 = handleMCPToolError(originalError, 'test_tool');
+      expect(result2).toEqual({
+        content: [{
+          type: 'text',
+          text: 'Error: Failed to execute test_tool: Test error'
+        }],
+        isError: true
+      });
     });
   });
 });

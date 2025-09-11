@@ -1327,7 +1327,15 @@ export class HarvestAPIClient {
       });
       
       const queryString = params.toString();
-      const url = `/reports/time?${queryString}`;
+      // Determine endpoint based on group_by parameter
+      const baseEndpoint = finalQuery.group_by === 'project' 
+        ? '/reports/time/projects'
+        : finalQuery.group_by === 'client'
+        ? '/reports/time/clients'
+        : finalQuery.group_by === 'task'
+        ? '/reports/time/tasks'
+        : '/reports/time';
+      const url = `${baseEndpoint}?${queryString}`;
       
       logger.debug('Fetching time report', { query: validatedQuery });
       const response: AxiosResponse = await this.client.get(url);
@@ -1366,7 +1374,13 @@ export class HarvestAPIClient {
       });
       
       const queryString = params.toString();
-      const url = `/reports/expenses?${queryString}`;
+      // Determine endpoint based on group_by parameter
+      const baseEndpoint = finalQuery.group_by === 'project' 
+        ? '/reports/expenses/projects'
+        : finalQuery.group_by === 'client'
+        ? '/reports/expenses/clients'
+        : '/reports/expenses';
+      const url = `${baseEndpoint}?${queryString}`;
       
       logger.debug('Fetching expense report', { query: validatedQuery });
       const response: AxiosResponse = await this.client.get(url);

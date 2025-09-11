@@ -4,6 +4,18 @@
 
 import '../matchers/harvest-matchers';
 import { HarvestMockServer } from '../mocks/harvest-mock-server';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+
+// Helper function to check if a tool result is an error
+function expectToolError(result: CallToolResult, expectedMessage?: string): void {
+  expect(result).toHaveProperty('isError', true);
+  expect(result).toHaveProperty('content');
+  expect(Array.isArray(result.content)).toBe(true);
+  expect(result.content[0]).toHaveProperty('type', 'text');
+  if (expectedMessage) {
+    expect(result.content[0].text).toContain(expectedMessage);
+  }
+}
 
 describe('Estimate Tools', () => {
   let mockServer: HarvestMockServer;

@@ -4,6 +4,18 @@
 
 import '../matchers/harvest-matchers';
 import { HarvestMockServer } from '../mocks/harvest-mock-server';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+
+// Helper function to check if a tool result is an error
+function expectToolError(result: CallToolResult, expectedMessage?: string): void {
+  expect(result).toHaveProperty('isError', true);
+  expect(result).toHaveProperty('content');
+  expect(Array.isArray(result.content)).toBe(true);
+  expect(result.content[0]).toHaveProperty('type', 'text');
+  if (expectedMessage) {
+    expect(result.content[0].text).toContain(expectedMessage);
+  }
+}
 
 describe('User Tools', () => {
   let mockServer: HarvestMockServer;
@@ -174,9 +186,10 @@ describe('User Tools', () => {
       const userTools = harvestServer.getToolsByCategory('users');
       const listUsersTool = userTools.find((tool: any) => tool.name === 'list_users');
 
-      await expect(listUsersTool.execute({
+      const result = await listUsersTool.execute({
         is_active: 'invalid', // Should be boolean
-      })).rejects.toThrow('Invalid parameters');
+      });
+      expectToolError(result, 'Invalid parameters');
     });
   });
 
@@ -197,8 +210,8 @@ describe('User Tools', () => {
       const userTools = harvestServer.getToolsByCategory('users');
       const getUserTool = userTools.find((tool: any) => tool.name === 'get_user');
 
-      await expect(getUserTool.execute({}))
-        .rejects.toThrow('Invalid parameters');
+      const result = await getUserTool.execute({});
+      expectToolError(result, 'Invalid parameters');
     });
   });
 
@@ -238,8 +251,8 @@ describe('User Tools', () => {
       const userTools = harvestServer.getToolsByCategory('users');
       const createUserTool = userTools.find((tool: any) => tool.name === 'create_user');
 
-      await expect(createUserTool.execute({}))
-        .rejects.toThrow('Invalid parameters');
+      const result = await createUserTool.execute({});
+      expectToolError(result, 'Invalid parameters');
     });
   });
 
@@ -264,8 +277,8 @@ describe('User Tools', () => {
       const userTools = harvestServer.getToolsByCategory('users');
       const updateUserTool = userTools.find((tool: any) => tool.name === 'update_user');
 
-      await expect(updateUserTool.execute({}))
-        .rejects.toThrow('Invalid parameters');
+      const result = await updateUserTool.execute({});
+      expectToolError(result, 'Invalid parameters');
     });
   });
 

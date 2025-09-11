@@ -4,6 +4,18 @@
 
 import '../matchers/harvest-matchers';
 import { HarvestMockServer } from '../mocks/harvest-mock-server';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+
+// Helper function to check if a tool result is an error
+function expectToolError(result: CallToolResult, expectedMessage?: string): void {
+  expect(result).toHaveProperty('isError', true);
+  expect(result).toHaveProperty('content');
+  expect(Array.isArray(result.content)).toBe(true);
+  expect(result.content[0]).toHaveProperty('type', 'text');
+  if (expectedMessage) {
+    expect(result.content[0].text).toContain(expectedMessage);
+  }
+}
 
 describe('Company Tool', () => {
   let mockServer: HarvestMockServer;
@@ -153,7 +165,8 @@ describe('Company Tool', () => {
       const companyTools = invalidServer.getToolsByCategory('company');
       const getCompanyTool = companyTools.find((tool: any) => tool.name === 'get_company');
 
-      await expect(getCompanyTool.execute({})).rejects.toThrow(/authentication|invalid|401/i);
+      const result = await getCompanyTool.execute({});
+      expectToolError(result, '401');
 
       if (invalidServer?.close) {
         await invalidServer.close();
@@ -200,7 +213,8 @@ describe('Company Tool', () => {
       const companyTools = rateLimitServer.getToolsByCategory('company');
       const getCompanyTool = companyTools.find((tool: any) => tool.name === 'get_company');
 
-      await expect(getCompanyTool.execute({})).rejects.toThrow(/rate.?limit|429/i);
+      const result = await getCompanyTool.execute({});
+      expectToolError(result, '429');
 
       if (rateLimitServer?.close) {
         await rateLimitServer.close();
