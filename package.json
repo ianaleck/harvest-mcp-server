@@ -64,5 +64,13 @@
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ianaleck/harvest-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ianaleck/harvest-mcp-server/issues"
+  },
+  "homepage": "https://github.com/ianaleck/harvest-mcp-server#readme"
 }
