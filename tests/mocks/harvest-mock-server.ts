@@ -1907,11 +1907,18 @@ export class HarvestMockServer {
     if (method.toUpperCase() === 'POST' && baseUrlPath === '/v2/time_entries' && config.data) {
       const data = config.data;
       
-      // If no hours and no start/end time, this is likely a timer start
-      const isTimerStart = !data.hours && !data.started_time && !data.ended_time;
+      // If started_time is provided but ended_time is NOT provided, this is a timer start (running timer)
+      // OR if no hours and no start/end time, this is likely a legacy timer start
+      const isTimerStart = (data.started_time && !data.ended_time) || (!data.hours && !data.started_time && !data.ended_time);
       
       if (isTimerStart) {
         // Return a running timer response
+        const currentTime = new Date().toLocaleTimeString('en-US', { 
+          hour12: true, 
+          hour: 'numeric', 
+          minute: '2-digit' 
+        }).toLowerCase();
+        
         response = {
           status: 201,
           data: {
@@ -1921,7 +1928,7 @@ export class HarvestMockServer {
             rounded_hours: 0,
             notes: data.notes || "Timer started for new task",
             timer_started_at: "2025-09-10T14:00:00Z",
-            started_time: null,
+            started_time: data.started_time || currentTime,
             ended_time: null,
             is_running: true,
           }

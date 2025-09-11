@@ -337,16 +337,24 @@ export class HarvestAPIClient {
         spentDate: validatedInput.spent_date
       });
       
-      // For timer start, we create a time entry with is_running: true
+      // Get current time in HH:MM format for started_time
+      const now = new Date();
+      const currentTime = now.toLocaleTimeString('en-US', { 
+        hour12: false, 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+
       const response: AxiosResponse = await this.client.post('/time_entries', {
         ...validatedInput,
-        // Timer entries don't have hours initially
+        started_time: currentTime,
       });
       
       logger.info('Successfully started timer', {
         timeEntryId: response.data.id,
         projectId: response.data.project?.id,
-        isRunning: response.data.is_running
+        isRunning: response.data.is_running,
+        startedTime: currentTime
       });
       
       return response.data;
