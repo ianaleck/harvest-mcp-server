@@ -337,14 +337,16 @@ export class HarvestAPIClient {
         spentDate: validatedInput.spent_date
       });
       
-      // Get current time in HH:MM format for started_time
+      // Generate current time for started_time
       const now = new Date();
       const currentTime = now.toLocaleTimeString('en-US', { 
         hour12: false, 
         hour: '2-digit', 
         minute: '2-digit' 
       });
-
+      
+      // Create running timer by providing started_time without ended_time
+      // This works for both timestamp-based and duration-based accounts
       const response: AxiosResponse = await this.client.post('/time_entries', {
         ...validatedInput,
         started_time: currentTime,

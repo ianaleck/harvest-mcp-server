@@ -157,7 +157,7 @@ export const TimeEntryQuerySchema = z.object({
 export const StartTimerSchema = z.object({
   project_id: z.number().int().positive(),
   task_id: z.number().int().positive(),
-  spent_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), // Defaults to today
+  spent_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format'),
   notes: z.string().max(2000).optional(),
   external_reference: z.object({
     id: z.string().optional(),

@@ -429,6 +429,7 @@ describe('Time Entry Tools', () => {
       const result = await startTimerTool.execute({
         project_id: 14307913,
         task_id: 8083365,
+        spent_date: '2025-09-10',
         notes: 'Timer started for new task'
       });
       
@@ -476,6 +477,14 @@ describe('Time Entry Tools', () => {
       // Start timer validation
       const result1 = await startTimerTool.execute({});
       expectToolError(result1, 'Invalid parameters');
+      
+      // Test missing spent_date specifically
+      const result1b = await startTimerTool.execute({
+        project_id: 14307913,
+        task_id: 8083365
+        // Missing spent_date
+      });
+      expectToolError(result1b, 'Invalid parameters');
 
       // Stop timer validation  
       const result2 = await stopTimerTool.execute({});

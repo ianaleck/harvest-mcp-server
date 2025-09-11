@@ -307,7 +307,7 @@ export class HarvestMockServer {
       }
     });
 
-    // Restart Timer
+    // Restart Timer - original entry
     this.responses.set('PATCH:/v2/time_entries/636709355/restart', {
       status: 200,
       data: {
@@ -1907,34 +1907,26 @@ export class HarvestMockServer {
     if (method.toUpperCase() === 'POST' && baseUrlPath === '/v2/time_entries' && config.data) {
       const data = config.data;
       
-      // If started_time is provided but ended_time is NOT provided, this is a timer start (running timer)
-      // OR if no hours and no start/end time, this is likely a legacy timer start
-      const isTimerStart = (data.started_time && !data.ended_time) || (!data.hours && !data.started_time && !data.ended_time);
-      
-      if (isTimerStart) {
-        // Return a running timer response
-        const currentTime = new Date().toLocaleTimeString('en-US', { 
-          hour12: true, 
-          hour: 'numeric', 
-          minute: '2-digit' 
-        }).toLowerCase();
-        
+      if (data.started_time && !data.ended_time) {
+        // Timer start: started_time provided but no ended_time = running timer
+        // This works for both timestamp-based and duration-based accounts
         response = {
           status: 201,
           data: {
             ...response.data,
+            id: 636709357, // Running timer ID
             hours: 0,
             hours_without_timer: 0,
             rounded_hours: 0,
             notes: data.notes || "Timer started for new task",
             timer_started_at: "2025-09-10T14:00:00Z",
-            started_time: data.started_time || currentTime,
+            started_time: data.started_time,
             ended_time: null,
             is_running: true,
           }
         };
       } else if (data.started_time && data.ended_time) {
-        // Return a time entry with the specified times
+        // Regular time entry with both start and end times
         response = {
           status: 201,
           data: {

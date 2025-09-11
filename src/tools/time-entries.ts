@@ -296,7 +296,7 @@ export function registerTimeEntryTools(config: BaseToolConfig): ToolRegistration
           properties: {
             project_id: { type: 'number', description: 'The project ID to start the timer for' },
             task_id: { type: 'number', description: 'The task ID to start the timer for' },
-            spent_date: { type: 'string', format: 'date', description: 'Date for the timer (defaults to today)' },
+            spent_date: { type: 'string', format: 'date', description: 'Date for the timer (YYYY-MM-DD format)' },
             notes: { type: 'string', maxLength: 2000, description: 'Initial notes for the timer' },
             external_reference: {
               type: 'object',
@@ -309,7 +309,7 @@ export function registerTimeEntryTools(config: BaseToolConfig): ToolRegistration
               additionalProperties: false,
             },
           },
-          required: ['project_id', 'task_id'],
+          required: ['project_id', 'task_id', 'spent_date'],
           additionalProperties: false,
         },
       },
