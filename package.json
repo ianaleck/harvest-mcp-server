@@ -1,6 +1,6 @@
 {
   "name": "@ianaleck/harvest-mcp-server",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Model Context Protocol server for Harvest API v2",
   "main": "dist/index.js",
   "bin": {
@@ -64,13 +64,5 @@
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ianaleck/harvest-mcp-server.git"
-  },
-  "bugs": {
-    "url": "https://github.com/ianaleck/harvest-mcp-server/issues"
-  },
-  "homepage": "https://github.com/ianaleck/harvest-mcp-server#readme"
+  }
 }
