@@ -60,15 +60,27 @@ jobs:
 
   secret-scan:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000' && github.event.before != github.event.after)
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       
+      - name: Determine scan range
+        id: scan-range
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "base=${{ github.event.pull_request.base.sha }}" >> $GITHUB_OUTPUT
+            echo "head=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          else
+            echo "base=${{ github.event.before }}" >> $GITHUB_OUTPUT  
+            echo "head=${{ github.event.after }}" >> $GITHUB_OUTPUT
+          fi
+      
       - name: Run TruffleHog OSS
         uses: trufflesecurity/trufflehog@main
         with:
           path: ./
-          base: origin/master
-          head: HEAD
+          base: ${{ steps.scan-range.outputs.base }}
+          head: ${{ steps.scan-range.outputs.head }}
           extra_args: --debug --only-verified
