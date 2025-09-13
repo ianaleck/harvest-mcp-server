@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.5",
-    "axios": "^1.11.0",
+    "axios": "^1.12.1",
     "dotenv": "^17.2.2",
     "winston": "^3.17.0",
     "zod": "^3.25.76"
