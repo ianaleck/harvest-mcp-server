@@ -1,5 +1,7 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import express, { Request, Response, NextFunction } from 'express';
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
@@ -173,6 +175,64 @@ export class HarvestMCPServer {
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
     logger.info('Harvest MCP Server running on stdio transport');
+  }
+
+  /**
+   * Run the server over HTTP using the StreamableHTTPServerTransport.
+   * Routes:
+   *   - /mcp  (GET/POST/DELETE)  -> MCP requests
+   *   - /health                 -> basic health JSON
+   * Optional API key auth via MCP_API_KEY env var (x-api-key or Bearer token)
+   */
+  public async runHttp(options?: { port?: number; apiKey?: string }) {
+    const port = options?.port || Number(process.env.PORT || process.env.MCP_PORT) || 3000;
+    const apiKey = options?.apiKey || process.env.MCP_API_KEY;
+
+    const app = express();
+    app.use(express.json({ limit: '1mb' }));
+
+    // Simple auth middleware (optional)
+    if (apiKey) {
+      app.use('/mcp', (req: Request, res: Response, next: NextFunction) => {
+        const headerKey = req.header('x-api-key');
+        const bearer = (req.header('authorization') || '').replace(/^Bearer\s+/i, '');
+        if (headerKey === apiKey || bearer === apiKey) return next();
+        res.status(401).json({ error: 'Unauthorized' });
+      });
+    }
+
+    const transport = new StreamableHTTPServerTransport({
+      enableJsonResponse: true,
+      sessionIdGenerator: undefined,
+    });
+    await this.server.connect(transport);
+
+    const handle = async (req: Request, res: Response) => {
+      try {
+        await transport.handleRequest(req, res, req.body);
+      } catch (e) {
+        logger.error('HTTP transport error', e);
+        if (!res.headersSent) {
+          res.status(500).json({ error: 'Internal error' });
+        }
+      }
+    };
+
+    app.get('/mcp', handle);
+    app.post('/mcp', handle);
+    app.delete('/mcp', handle);
+    app.get('/health', (_req: Request, res: Response) => {
+      res.json({ status: 'ok', name: 'harvest-mcp-server', transport: 'http' });
+    });
+
+    app.listen(port, () => {
+      logger.info(`Harvest MCP Server HTTP listening on 0.0.0.0:${port}/mcp`);
+      if (apiKey) {
+        logger.info('API key authentication enabled');
+      } else {
+        logger.warn('API key authentication disabled');
+      }
+    });
   }
 
   public async close() {
