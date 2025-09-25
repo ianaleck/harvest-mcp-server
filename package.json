@@ -1,6 +1,6 @@
 {
   "name": "@ianaleck/harvest-mcp-server",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Model Context Protocol server for Harvest API v2",
   "main": "dist/index.js",
   "bin": {
