@@ -22,8 +22,15 @@ async function main() {
       process.exit(0);
     });
 
-    // Start the server
-    await server.run();
+    // Determine transport (default stdio)
+    const transport = (process.env.MCP_TRANSPORT || 'stdio').toLowerCase();
+    if (transport === 'http' || transport === 'streamable-http') {
+      logger.info('Starting Harvest MCP Server with HTTP transport');
+      await server.runHttp({});
+    } else {
+      logger.info('Starting Harvest MCP Server with stdio transport');
+      await server.run();
+    }
     
   } catch (error) {
     logger.error('Failed to start Harvest MCP Server:', error);
