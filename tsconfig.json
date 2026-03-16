@@ -19,7 +19,6 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
-    "exactOptionalPropertyTypes": true,
     "resolveJsonModule": true,
     "moduleResolution": "node16",
     "allowSyntheticDefaultImports": true,
