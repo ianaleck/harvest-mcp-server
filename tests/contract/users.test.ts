@@ -13,7 +13,10 @@ function expectToolError(result: CallToolResult, expectedMessage?: string): void
   expect(Array.isArray(result.content)).toBe(true);
   expect(result.content[0]).toHaveProperty('type', 'text');
   if (expectedMessage) {
-    expect(result.content[0].text).toContain(expectedMessage);
+    const item = result.content[0];
+    if (item.type === 'text') {
+      expect(item.text).toContain(expectedMessage);
+    }
   }
 }
 
