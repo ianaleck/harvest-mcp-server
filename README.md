@@ -11,6 +11,8 @@
 
 **⚠️ Disclaimer:** This is an unofficial, third-party integration with the Harvest API. This project is not affiliated with, endorsed by, or sponsored by Harvest or Forecast (the company behind Harvest).
 
+[![harvest-mcp-server MCP server](https://glama.ai/mcp/servers/ianaleck/harvest-mcp-server/badges/card.svg)](https://glama.ai/mcp/servers/ianaleck/harvest-mcp-server)
+
 ## ✨ Features
 
 - 🔗 **Complete Harvest API v2 Coverage** - 40+ tools covering all major endpoints
