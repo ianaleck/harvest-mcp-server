@@ -129,3 +129,82 @@ export type UpdateInvoiceInput = z.infer<typeof UpdateInvoiceSchema>;
 export type InvoiceLineItem = z.infer<typeof InvoiceLineItemSchema>;
 export type CreateInvoiceLineItemInput = z.infer<typeof CreateInvoiceLineItemSchema>;
 export type InvoiceQuery = z.infer<typeof InvoiceQuerySchema>;
+const PaymentDateSchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/)
+  .refine((value) => {
+    const parsed = new Date(`${value}T00:00:00.000Z`);
+    return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+  }, 'Invalid calendar date');
+
+export const InvoicePaymentQuerySchema = z
+  .object({
+    invoice_id: z.number().int().positive(),
+    updated_since: z.string().datetime({ offset: true }).optional(),
+    per_page: z.number().int().min(1).max(2000).optional(),
+    page_url: z.string().url().optional(),
+  })
+  .strict();
+
+export const RecordInvoicePaymentSchema = z
+  .object({
+    invoice_id: z.number().int().positive(),
+    amount: z.number().finite().positive(),
+    paid_at: z.string().datetime({ offset: true }).optional(),
+    paid_date: PaymentDateSchema.optional(),
+    notes: z.string().optional(),
+    send_thank_you: z.boolean().default(false),
+  })
+  .strict()
+  .refine((value) => Boolean(value.paid_at) !== Boolean(value.paid_date), {
+    message: 'Supply exactly one of paid_at or paid_date',
+  });
+
+export type InvoicePaymentQuery = z.infer<typeof InvoicePaymentQuerySchema>;
+export type RecordInvoicePaymentInput = z.infer<typeof RecordInvoicePaymentSchema>;
+
+/** Validated Harvest payment data; unknown API fields are omitted from tool output. */
+export const InvoicePaymentSchema = z.object({
+  id: z.number().int().positive(),
+  amount: z.number().finite().nonnegative(),
+  paid_date: PaymentDateSchema,
+  paid_at: z.string().datetime({ offset: true }).nullable().optional(),
+  recorded_by: z.string().nullable().optional(),
+  recorded_by_email: z.string().nullable().optional(),
+  notes: z.string().nullable().optional(),
+  transaction_id: z.string().nullable().optional(),
+  payment_gateway: z
+    .object({ id: z.number().int().positive().nullable(), name: z.string().nullable() })
+    .nullable()
+    .optional(),
+  created_at: z.string().datetime({ offset: true }).optional(),
+  updated_at: z.string().datetime({ offset: true }).optional(),
+});
+
+/** Payment page validation supports both cursor and legacy pagination metadata. */
+export const InvoicePaymentsListSchema = z.object({
+  invoice_payments: z.array(InvoicePaymentSchema),
+  per_page: z.number().int().positive().optional(),
+  total_pages: z.number().int().nonnegative().optional(),
+  total_entries: z.number().int().nonnegative().optional(),
+  next_page: z.number().int().positive().nullable().optional(),
+  previous_page: z.number().int().positive().nullable().optional(),
+  page: z.number().int().positive().optional(),
+  links: z
+    .object({
+      first: z.string().url().optional(),
+      next: z.string().url().nullable().optional(),
+      previous: z.string().url().nullable().optional(),
+      last: z.string().url().optional(),
+    })
+    .optional(),
+});
+
+/** Only the balance fields used to verify a recorded payment are returned. */
+export const InvoicePaymentBalanceSchema = InvoiceSchema.pick({
+  id: true,
+  due_amount: true,
+  state: true,
+});
+export type InvoicePayment = z.infer<typeof InvoicePaymentSchema>;
+export type InvoicePaymentsList = z.infer<typeof InvoicePaymentsListSchema>;

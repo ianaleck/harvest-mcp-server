@@ -186,7 +186,7 @@ describe('Time Entry Tools', () => {
     it('should successfully list time entries', async () => {
       // First check if tools are registered at all
       const allTools = await harvestServer.listTools();
-      expect(allTools.length).toBe(54); // Complete Harvest MCP server with all registered tools
+      expect(allTools.length).toBe(56); // Complete Harvest MCP server with all registered tools
       
       const timeEntryTools = harvestServer.getToolsByCategory('time_entries');
       expect(timeEntryTools.length).toBe(8); // Should be 8 time entry tools

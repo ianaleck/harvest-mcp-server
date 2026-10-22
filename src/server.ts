@@ -135,7 +135,7 @@ export class HarvestMCPServer {
       'tasks': ['list_tasks', 'get_task', 'create_task', 'update_task', 'delete_task'],
       'clients': ['list_clients', 'get_client', 'create_client', 'update_client', 'delete_client'],
       'users': ['list_users', 'get_user', 'get_current_user', 'create_user', 'update_user', 'delete_user'],
-      'invoices': ['list_invoices', 'get_invoice', 'create_invoice', 'update_invoice', 'delete_invoice'],
+      'invoices': ['list_invoices', 'get_invoice', 'create_invoice', 'update_invoice', 'delete_invoice', 'list_invoice_payments', 'record_invoice_payment'],
       'expenses': ['list_expenses', 'get_expense', 'create_expense', 'update_expense', 'delete_expense', 'list_expense_categories'],
       'estimates': ['list_estimates', 'get_estimate', 'create_estimate', 'update_estimate', 'delete_estimate'],
       'reports': ['get_time_report', 'get_expense_report', 'get_project_budget_report', 'get_uninvoiced_report'],

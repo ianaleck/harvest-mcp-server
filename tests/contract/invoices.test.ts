@@ -174,7 +174,7 @@ describe('Invoice Tools', () => {
     it('should return all invoice tools by category', async () => {
       const invoiceTools = harvestServer.getToolsByCategory('invoices');
       
-      expect(invoiceTools).toHaveLength(5);
+      expect(invoiceTools).toHaveLength(7);
       
       const toolNames = invoiceTools.map((tool: any) => tool.name);
       expect(toolNames).toContain('list_invoices');

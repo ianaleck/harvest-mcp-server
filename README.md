@@ -9,6 +9,14 @@
 
 > **Unofficial** Model Context Protocol (MCP) server for seamless integration with the Harvest time tracking API
 
+## Invoice payments
+
+`list_invoice_payments` reads payments on one invoice. Supply a positive `invoice_id`; optional `per_page` (1–2000) and `updated_since` select the first page. Harvest returns pagination `links`. For a later page, pass the returned `links.next` URL as `page_url` alongside the same `invoice_id`. A page URL cannot be combined with the other filters and must point to that invoice's payments endpoint under the client's configured base URL.
+
+`record_invoice_payment` records a full or partial payment. Supply a positive `invoice_id`, positive finite `amount`, and exactly one of `paid_date` (`YYYY-MM-DD`) or `paid_at` (timestamp with time zone). Optional `notes` are forwarded. `send_thank_you` defaults to `false`; set it to `true` only when a thank-you email is intended. The result includes the created payment and the refreshed invoice's `due_amount` and `state`.
+
+A payment POST is not automatically retried. Definite HTTP 4xx failures return the API error. Network failures, timeouts, HTTP 5xx responses, and unreadable successful responses can leave the outcome uncertain. If its outcome is uncertain, inspect `list_invoice_payments` before attempting another record operation. If Harvest creates the payment but the invoice read fails, the tool returns the created payment ID with `recorded_verification_failed` so the invoice can be checked without submitting another payment.
+
 **⚠️ Disclaimer:** This is an unofficial, third-party integration with the Harvest API. This project is not affiliated with, endorsed by, or sponsored by Harvest or Forecast (the company behind Harvest).
 
 [![harvest-mcp-server MCP server](https://glama.ai/mcp/servers/ianaleck/harvest-mcp-server/badges/card.svg)](https://glama.ai/mcp/servers/ianaleck/harvest-mcp-server)

@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { appConfig, HARVEST_API_BASE_URL } from '../config/index';
 import { createLogger } from '../utils/logger';
+import { HarvestAPIError } from '../utils/errors';
 
 export interface HarvestAPIOptions {
   accessToken: string;
@@ -14,11 +15,13 @@ export abstract class BaseHarvestClient {
   protected readonly client: AxiosInstance;
   protected readonly accessToken: string;
   protected readonly accountId: string;
+  protected readonly baseUrl: string;
   protected readonly logger: any;
 
   constructor(options: HarvestAPIOptions, loggerName: string = 'harvest-api') {
     this.accessToken = options.accessToken;
     this.accountId = options.accountId;
+    this.baseUrl = options.baseUrl || HARVEST_API_BASE_URL;
     this.logger = createLogger(loggerName);
 
     // Use provided mock client or create real axios client
@@ -26,7 +29,7 @@ export abstract class BaseHarvestClient {
       this.client = options.httpClient;
     } else {
       this.client = axios.create({
-        baseURL: options.baseUrl || HARVEST_API_BASE_URL,
+        baseURL: this.baseUrl,
         timeout: options.timeout || appConfig.http.timeout,
         headers: {
           'Authorization': `Bearer ${this.accessToken}`,
@@ -68,26 +71,29 @@ export abstract class BaseHarvestClient {
           this.logger.error(`HTTP ${status} ${statusText} from ${error.config?.url}:`, {
             status,
             statusText,
-            data: error.response.data
+            // Payment errors can contain financial notes; do not persist their response bodies.
+            data: /\/invoices\/\d+\/payments(?:[?]|$)/.test(error.config?.url || '')
+              ? '[redacted payment response]'
+              : error.response.data
           });
 
           switch (status) {
             case 401:
-              throw new Error('Authentication failed: Invalid access token or account ID');
+              throw new HarvestAPIError('Authentication failed: Invalid access token or account ID', status);
             case 403:
-              throw new Error('Access forbidden: Insufficient permissions');
+              throw new HarvestAPIError('Access forbidden: Insufficient permissions', status);
             case 404:
-              throw new Error('Resource not found');
+              throw new HarvestAPIError('Resource not found', status);
             case 429:
               const retryAfter = error.response.headers['retry-after'];
-              throw new Error(`Rate limit exceeded. Retry after ${retryAfter || 'unknown'} seconds`);
+              throw new HarvestAPIError(`Rate limit exceeded. Retry after ${retryAfter || 'unknown'} seconds`, status);
             case 500:
             case 502:
             case 503:
             case 504:
-              throw new Error(`Server error (${status}): Please try again later`);
+              throw new HarvestAPIError(`Server error (${status}): Please try again later`, status);
             default:
-              throw new Error(`HTTP ${status}: ${statusText}`);
+              throw new HarvestAPIError(`HTTP ${status}: ${statusText}`, status);
           }
         } else if (error.request) {
           // Network error
